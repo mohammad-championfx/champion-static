@@ -36281,31 +36281,31 @@
 	        ChampionSocket.wait('authorize').then(function () {
 	            $account_guide = $('#account_guide');
 
-	            // setExists('.virtual');
-	            // setDisabled('.has-real');
-	            // $account_guide.find('#mt5_tip').removeClass(hidden_class);
-	            if (!Client.is_logged_in()) {
-	                setDisabled('.logged-in');
-	                $account_guide.find('a.login').attr('href', Login.login_url());
-	            } else {
-	                setExists('.virtual');
-
-	                if (!Client.has_real()) {
-	                    setDisabled('.has-real');
-	                    $account_guide.find('#mt5_tip').removeClass(hidden_class);
-	                } else {
-	                    setExists('.real');
-	                }
-
-	                ChampionSocket.wait('mt5_login_list').then(function (response) {
-	                    (response.mt5_login_list || []).forEach(function (obj) {
-	                        var acc_type = Client.getMT5AccountType(obj.group);
-	                        if (acc_type) {
-	                            setExists('.mt5_' + (acc_type === 'demo' ? 'demo' : 'real'));
-	                        }
-	                    });
-	                });
-	            }
+	            setExists('.virtual');
+	            setDisabled('.has-real');
+	            $account_guide.find('#mt5_tip').removeClass(hidden_class);
+	            // if (!Client.is_logged_in()) {
+	            //     setDisabled('.logged-in');
+	            //     $account_guide.find('a.login').attr('href', Login.login_url());
+	            // } else {
+	            //     setExists('.virtual');
+	            //
+	            //     if (!Client.has_real()) {
+	            //         setDisabled('.has-real');
+	            //         $account_guide.find('#mt5_tip').removeClass(hidden_class);
+	            //     } else {
+	            //         setExists('.real');
+	            //     }
+	            //
+	            //     ChampionSocket.wait('mt5_login_list').then((response) => {
+	            //         (response.mt5_login_list || []).forEach((obj) => {
+	            //             const acc_type = Client.getMT5AccountType(obj.group);
+	            //             if (acc_type) {
+	            //                 setExists(`.mt5_${acc_type === 'demo' ? 'demo' : 'real'}`);
+	            //             }
+	            //         });
+	            //     });
+	            // }
 
 	            var $guide_content = $account_guide.find('#guide_content');
 	            var $guide_button = $account_guide.find('#guide_button');
