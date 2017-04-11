@@ -2438,6 +2438,15 @@ button .barspinner.white {
   padding: 10px 30px 20px;
   font-size: 0.9em;
   height: 100%;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+#account_guide #guide_content .account-desc .buttons-row {
+  margin-top: auto;
 }
 #account_guide #guide_content .account-desc .account-exists {
   border: 3px solid #004385;
@@ -2475,8 +2484,12 @@ button .barspinner.white {
   left: 0;
   top: 4px;
 }
-#account_guide #guide_content .account-desc #mt5_tip {
+#account_guide #guide_content .account-desc .account-tooltip {
   color: #004385;
+}
+#account_guide #guide_content .account-desc .or {
+  display: inline-block;
+  padding: 0 15px;
 }
 #account_guide #guide_button {
   position: absolute;

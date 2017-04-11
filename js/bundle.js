@@ -36291,7 +36291,6 @@
 
 	                if (!Client.has_real()) {
 	                    setDisabled('.has-real');
-	                    $account_guide.find('#mt5_tip').removeClass(hidden_class);
 	                } else {
 	                    setExists('.real');
 	                }
