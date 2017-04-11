@@ -2448,6 +2448,11 @@ button .barspinner.white {
 #account_guide #guide_content .account-desc .buttons-row {
   margin-top: auto;
 }
+#account_guide #guide_content .account-desc .buttons-row .login {
+  white-space: nowrap;
+  padding: 10px 0;
+  display: inline-block;
+}
 #account_guide #guide_content .account-desc .account-exists {
   border: 3px solid #004385;
   border-radius: 40px;

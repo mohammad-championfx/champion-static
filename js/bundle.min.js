@@ -18878,6 +18878,7 @@
 	        set_cookie('loginid_list', virtual_client ? client_loginid + ':V:E' : client_loginid + ':R:E+' + Cookies.get('loginid_list'));
 	        // set local storage
 	        localStorage.setItem('GTM_new_account', '1');
+	        localStorage.setItem('show_guide', '1');
 	        set('loginid', client_loginid);
 	        window.location.href = url.default_redirect_url();
 	    };
@@ -36311,6 +36312,12 @@
 	                });
 	            });
 	            $account_guide.removeClass(hidden_class);
+
+	            // check display flag
+	            if (localStorage.getItem('show_guide') === '1') {
+	                localStorage.removeItem('show_guide');
+	                $('#guide_button:not(.open)').click();
+	            }
 	        });
 	    };
 
@@ -37391,7 +37398,6 @@
 	                } else {
 	                    var acc_info = response.new_account_real;
 	                    Client.process_new_account(Client.get('email'), acc_info.client_id, acc_info.oauth_token);
-	                    window.location.href = default_redirect_url();
 	                }
 	            });
 	        } else {
@@ -37580,7 +37586,6 @@
 	var ChampionSocket = __webpack_require__(420);
 	var Client = __webpack_require__(301);
 	var Utility = __webpack_require__(424);
-	var default_redirect_url = __webpack_require__(426).default_redirect_url;
 	var Validation = __webpack_require__(439);
 
 	var ChampionNewVirtualAccount = function () {
@@ -37646,7 +37651,6 @@
 	                } else {
 	                    var acc_info = response.new_account_virtual;
 	                    Client.process_new_account(acc_info.email, acc_info.client_id, acc_info.oauth_token, true);
-	                    window.location.href = default_redirect_url();
 	                }
 	            });
 	        }
