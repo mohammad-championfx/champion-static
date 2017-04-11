@@ -36281,8 +36281,6 @@
 	        ChampionSocket.wait('authorize').then(function () {
 	            $account_guide = $('#account_guide');
 
-	            // setExists('.virtual');
-	            // setDisabled('.logged-in, .has-real');
 	            if (!Client.is_logged_in()) {
 	                setDisabled('.logged-in');
 	                $account_guide.find('a.login').attr('href', Login.login_url());
