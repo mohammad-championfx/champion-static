@@ -36281,6 +36281,8 @@
 	        ChampionSocket.wait('authorize').then(function () {
 	            $account_guide = $('#account_guide');
 
+	            // setExists('.virtual');
+	            // setDisabled('.logged-in, .has-real');
 	            if (!Client.is_logged_in()) {
 	                setDisabled('.logged-in');
 	                $account_guide.find('a.login').attr('href', Login.login_url());
@@ -36318,6 +36320,7 @@
 	    var setDisabled = function setDisabled(account_selector) {
 	        var $account = $account_guide.find(account_selector).addClass('disabled');
 	        $account.each(function () {
+	            $(this).find('.account-tooltip').removeClass(hidden_class);
 	            var $button = $(this).find('a.button');
 	            $button.replaceWith(function () {
 	                return $('<span/>', { class: 'button-disabled', href: $button.attr('href'), html: $button.html() });
