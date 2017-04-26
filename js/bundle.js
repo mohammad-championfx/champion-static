@@ -18575,7 +18575,7 @@
 
 	    var changeChatIcon = function changeChatIcon() {
 	        // desk.com change icon - crude way
-	        if ($('#live-chat-icon').length > 0) {
+	        if ($('#live_chat_icon').length > 0) {
 	            var timer = null;
 	            var image_url = urlForStatic('images/symbols/cs.svg');
 	            var updateIcon = function updateIcon() {
