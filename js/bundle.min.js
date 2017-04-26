@@ -18537,7 +18537,7 @@
 	            site: 'champion.desk.com',
 	            port: '80',
 	            type: 'chat',
-	            id: 'live-chat-icon',
+	            id: 'live_chat_icon',
 	            displayMode: 0, // 0 for popup, 1 for lightbox
 	            features: {
 	                offerAlways: true,
@@ -18577,7 +18577,7 @@
 	        // desk.com change icon - crude way
 	        if ($('#live-chat-icon').length > 0) {
 	            var timer = null;
-	            var image_url = urlForStatic('images/chat-icon.svg');
+	            var image_url = urlForStatic('images/symbols/cs.svg');
 	            var updateIcon = function updateIcon() {
 	                var desk_widget = $('.a-desk-widget');
 	                var image_str = desk_widget.css('background-image');
@@ -18590,7 +18590,7 @@
 	                        width: 'auto'
 	                    });
 
-	                    if (image_str.match(/live-chat-icon/g)) {
+	                    if (image_str.match(/live_chat_icon/g)) {
 	                        clearInterval(timer);
 	                    }
 	                }
