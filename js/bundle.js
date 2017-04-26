@@ -18574,27 +18574,27 @@
 	    };
 
 	    var changeChatIcon = function changeChatIcon() {
-	        // desk.com change icon - crude way
-	        if ($('#live_chat_icon').length > 0) {
+	        var $chat_icon = $('#live_chat_icon');
+	        if ($chat_icon.length > 0) {
 	            var timer = null;
-	            var image_url = urlForStatic('images/symbols/cs.svg');
 	            var updateIcon = function updateIcon() {
-	                var desk_widget = $('.a-desk-widget');
-	                var image_str = desk_widget.css('background-image');
+	                var $desk_widget = $('.a-desk-widget');
+	                var image_str = $desk_widget.css('background-image');
 	                if (image_str) {
-	                    desk_widget.css({
-	                        'background-image': 'url("' + image_url + '")',
+	                    $desk_widget.css({
+	                        'background-image': 'url("' + urlForStatic('images/symbols/cs.svg') + '")',
 	                        'background-size': 'contain',
 	                        'min-width': 50,
 	                        'min-height': 50,
 	                        width: 'auto'
-	                    });
+	                    }).attr('href', 'java' + 'script' + ':;');
 
-	                    if (image_str.match(/live_chat_icon/g)) {
+	                    if (image_str.match(/(none|cs\.svg)/g)) {
 	                        clearInterval(timer);
+	                        $chat_icon.removeClass('invisible');
 	                    }
 	                }
-	                desk_widget.removeAttr('onmouseover onmouseout');
+	                $desk_widget.removeAttr('onmouseover onmouseout');
 	            };
 	            timer = setInterval(updateIcon, 500);
 	        }
