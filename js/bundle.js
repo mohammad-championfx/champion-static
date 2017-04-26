@@ -18534,7 +18534,7 @@
 	    var renderDeskWidget = function renderDeskWidget() {
 	        new DESK.Widget({
 	            version: 1,
-	            site: 'champion.desk.com',
+	            site: 'binary.desk.com',
 	            port: '80',
 	            type: 'chat',
 	            id: 'live_chat_icon',
