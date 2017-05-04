@@ -188,9 +188,6 @@ h1.main-title {
   margin-left: 15px;
 }
 
-#account-info {
-  text-align: center;
-}
 #account-info:hover {
   color: #dedede;
 }
@@ -1408,6 +1405,9 @@ iframe {
 #header .top-nav-menu ul li a.active {
   border-bottom: none;
 }
+#header.logged-in {
+  border: none;
+}
 #header.logged-in .logo-parent {
   padding: 5px 0;
 }
@@ -1428,6 +1428,48 @@ iframe {
 }
 #header.logged-in, #header.logged-in #main-logout, #header.logged-in #main-account {
   height: 50px;
+}
+#header.logged-in #main-logout, #header.logged-in .main-nav {
+  width: auto;
+  white-space: nowrap;
+}
+#header.logged-in .account-balance {
+  font-size: 13px;
+}
+#header.logged-in .account-type {
+  font-size: 11px;
+}
+#header.logged-in .main-nav li {
+  text-align: left;
+}
+#header.logged-in .main-nav li a {
+  padding: 0 15px;
+}
+#header.logged-in .main-nav li .nav-caret {
+  position: absolute;
+  top: 20px;
+  right: 10px;
+}
+#header.logged-in #all-accounts, #header.logged-in #all-accounts li ul {
+  background: #004385;
+  border: none;
+}
+#header.logged-in #all-accounts a {
+  color: #fff;
+}
+#header.logged-in #all-accounts > li a {
+  margin: 1px 1px 0 0;
+}
+#header.logged-in #all-accounts ul {
+  margin-left: 0;
+}
+#header.logged-in #all-accounts ul li:hover {
+  opacity: 0.7;
+  background: none;
+}
+#header.logged-in #all-accounts ul .separator-line-thin-gray {
+  opacity: 0.5;
+  margin: 0 15px;
 }
 
 .main-nav > li > ul {
@@ -2586,7 +2628,7 @@ button .barspinner.white {
   }
 
   #account-info {
-    text-align: right !important;
+    float: right;
   }
 
   #header .button span, .button-secondary span {

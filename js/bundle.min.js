@@ -36187,24 +36187,22 @@
 	        }
 
 	        var loginid_select = '';
-	        var loginid_array = Client.get('loginid_array');
-	        for (var i = 0; i < loginid_array.length; i++) {
-	            var login = loginid_array[i];
+	        Client.get('loginid_array').forEach(function (login) {
 	            if (!login.disabled) {
 	                var curr_id = login.id;
-	                var type = (login.real ? 'Real' : 'Virtual') + ' Account';
+	                var type = '(' + (login.real ? 'Real' : 'Virtual') + ' Account)';
 	                var icon = login.real ? 'fx-real-icon' : 'fx-virtual-icon';
 
 	                // default account
 	                if (curr_id === Client.get('loginid')) {
-	                    $('.account-type').html(type);
-	                    $('.account-id').html(curr_id);
+	                    $('.main-account .account-type').html(type);
+	                    $('.main-account .account-id').html(curr_id);
 	                    loginid_select += '<div class="hidden-lg-up">\n                                        <span class="selected" href="javascript:;" value="' + curr_id + '">\n                                        <li><span class="nav-menu-icon pull-left ' + icon + '"></span>' + curr_id + '</li>\n                                        </span>\n                                       <div class="separator-line-thin-gray"></div></div>';
 	                } else {
-	                    loginid_select += '<a href="javascript:;" value="' + curr_id + '">\n                                        <li>\n                                            <span class="hidden-lg-up nav-menu-icon pull-left ' + icon + '"></span>\n                                            <div class="hidden-lg-down">' + type + '</div>\n                                            <div>' + curr_id + '</div>\n                                        </li>\n                                       </a>\n                                        <div class="separator-line-thin-gray"></div>';
+	                    loginid_select += '<a href="javascript:;" value="' + curr_id + '">\n                                        <li>\n                                            <span class="hidden-lg-up nav-menu-icon pull-left ' + icon + '"></span>\n                                            <div>' + curr_id + '</div>\n                                            <div class="hidden-lg-down account-type">' + type + '</div>\n                                        </li>\n                                       </a>\n                                        <div class="separator-line-thin-gray"></div>';
 	                }
 	            }
-	        }
+	        });
 	        $('.login-id-list').html(loginid_select);
 	        $('.login-id-list a').off('click').on('click', function (e) {
 	            e.preventDefault();
@@ -36319,7 +36317,7 @@
 	            return;
 	        }
 	        var view = formatMoney(balance, currency);
-	        $('.topMenuBalance').text(view).css('visibility', 'visible');
+	        $('.account-balance').text(view).css('visibility', 'visible');
 	    };
 
 	    return {

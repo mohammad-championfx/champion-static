@@ -18,11 +18,10 @@
     <meta name="description" content="ChampionFX Static" />
     <link rel="icon" type="image/png" sizes="16x16" href="/champion-static/images/favicons/CFX_favicon16.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/champion-static/images/favicons/CFX_favicon32.png" />
-     <link rel="stylesheet" href="/champion-static/css/flex.min.css?s06tmhm2" />
-     <link rel="stylesheet" href="/champion-static/css/style.min.css?s06tmhm2" />
-     <link rel="stylesheet" href="https://style.champion-fx.com/binary.css?s06tmhm2" />
-      <script src="/champion-static/js/bundle.js?s06tmhm2" type="text/javascript"></script>
-     <script src="https://style.champion-fx.com/binary.js?s06tmhm2" type="text/javascript"></script>
+     <link rel="stylesheet" href="/champion-static/css/style.min.css?nbmlr7mz" />
+     <link rel="stylesheet" href="https://style.champion-fx.com/binary.css?nbmlr7mz" />
+      <script src="/champion-static/js/bundle.js?nbmlr7mz" type="text/javascript"></script>
+     <script src="https://style.champion-fx.com/binary.js?nbmlr7mz" type="text/javascript"></script>
      
 </head>
 <body>
@@ -193,17 +192,31 @@
         </li>
     
         <li>
-            <a href="/champion-static/en/home.html" class="nav-dropdown-toggle">MT5</a>
+            <a href="javascript:;" class="nav-dropdown-toggle">MT5<span class="nav-caret"></span></a>
+            
+                <ul class="top-nav-menu invisible logged-out">
+    
+        <li>
+            <a href="/champion-static/en/forex.html" class="nav-dropdown-toggle">Forex</a>
+            
+        </li>
+    
+        <li>
+            <a href="/champion-static/en/cfd.html" class="nav-dropdown-toggle">CFDs</a>
+            
+        </li>
+    
+        <li>
+            <a href="/champion-static/en/metals.html" class="nav-dropdown-toggle">Metals</a>
+            
+        </li>
+    
+    </ul>
             
         </li>
     
         <li>
             <a href="/champion-static/en/binary-options.html" class="nav-dropdown-toggle">Binary Options</a>
-            
-        </li>
-    
-        <li>
-            <a href="/champion-static/en/trading-platform.html" class="nav-dropdown-toggle">Trading Platforms</a>
             
         </li>
     
@@ -226,7 +239,7 @@
         </li>
     
         <li>
-            <a href="/champion-static/en/partnerships.html" class="nav-dropdown-toggle">Partnerships</a>
+            <a href="/champion-static/en/trading-platform.html" class="nav-dropdown-toggle">Trading Platforms</a>
             
         </li>
     
@@ -249,19 +262,20 @@
                     </div>
                     <!-- Desktop menu -->
                     <div class="logged-in invisible hidden-lg-up">
-                        <a id="account-info" href="javascript:;" class="nav-menu nav-toggle-dropdown">
+                        <a id="account-info" href="javascript:;" class="main-account nav-menu nav-toggle-dropdown">
                             <div class="account-id"></div>
-                            <div class="topMenuBalance"></div>
+                            <span class="account-balance"></span>
+                            <span class="account-type"></span>
                         </a>
                     </div>
-                    <div id="main-logout" class="invisible logged-in hidden-lg-down">
+                    <div id="main-logout" class="logged-in invisible hidden-lg-down">
                         <ul id="main-account" class="nav-menu main-nav hidden-lg-down">
-                            <li class="account logged-in invisible">
+                            <li class="account">
                                 <a href="javascript:;">
                                     <div class="main-account">
-                                        <div class="account-type"></div>
                                         <div class="account-id"></div>
-                                        <div class="topMenuBalance"></div>
+                                        <span class="account-balance"></span>
+                                        <span class="account-type"></span>
                                     </div>
                                     <div class="nav-caret"></div>
                                 </a>
@@ -271,47 +285,19 @@
                             <li class="account">
                                 <a href="javascript:;" class="menu-icon">
                                     <div class="main-account">
-                                        <div class="account-type"></div>
                                         <div class="account-id"></div>
-                                        <div class="topMenuBalance">&nbsp;</div>
+                                        <span class="account-balance">&nbsp;</span>
+                                        <span class="account-type"></span>
                                     </div>
                                     <div class="nav-caret"></div>
                                 </a>
                                 <ul>
-                                    <a class="link invisible logged-out" href="/champion-static/en/home.html#signup">
-                                        <li>Sign Up</li>
-                                    </a>
-                                    <a class="link invisible logged-in" href="/champion-static/en/user/settings.html">
-                                        <li class="topMenuSettings">Settings</li>
+                                    <div class="login-id-list"></div>
+                                    <a href="/champion-static/en/user/metatrader.html">
+                                        <li>MetaTrader</li>
                                     </a>
                                     <div class="separator-line-thin-gray"></div>
-                                    <a class="link invisible logged-in" href="/champion-static/en/cashier.html">
-                                        <li class="topMenuCashier">Cashier</li>
-                                    </a>
-                                    <div class="separator-line-thin-gray invisible logged-in"></div>
-                                    <a href="/champion-static/en/about-us.html" class="hidden-lg-up">
-                                        <li>About</li>
-                                    </a>
-                                    <li class="hidden-lg-up has-sub">
-                                        <a href="javascript:;">MT5</a>
-                                        <ul class="invisible">
-                                            <li><a href="/champion-static/en/forex.html">Forex</a></li>
-                                            <li><a href="/champion-static/en/cfd.html">CFDs</a></li>
-                                            <li><a href="/champion-static/en/metals.html">Metals</a></li>
-                                        </ul>
-                                    </li>
-                                    <a href="/champion-static/en/binary-options.html" class="hidden-lg-up">
-                                        <li>Binary Options</li>
-                                    </a>
-                                    <a href="/champion-static/en/trading-platform.html" class="hidden-lg-up">
-                                        <li>Trading Platforms</li>
-                                    </a>
-                                    <a href="/champion-static/en/partnerships.html" class="hidden-lg-up">
-                                        <li>Partnerships</li>
-                                    </a>
-                                    <div class="separator-line-thin-gray hidden-lg-up invisible logged-in"></div>
-                                    <div class="login-id-list"></div>
-                                    <a href="javascript:;" class="btn-logout logout invisible logged-in">
+                                    <a href="javascript:;" class="btn-logout logout">
                                         <li>Sign out</li>
                                     </a>
                                 </ul>
