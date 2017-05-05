@@ -18,10 +18,10 @@
     <meta name="description" content="ChampionFX Static" />
     <link rel="icon" type="image/png" sizes="16x16" href="/champion-static/images/favicons/CFX_favicon16.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/champion-static/images/favicons/CFX_favicon32.png" />
-     <link rel="stylesheet" href="/champion-static/css/style.min.css?nbmlr7mz" />
-     <link rel="stylesheet" href="https://style.champion-fx.com/binary.css?nbmlr7mz" />
-      <script src="/champion-static/js/bundle.js?nbmlr7mz" type="text/javascript"></script>
-     <script src="https://style.champion-fx.com/binary.js?nbmlr7mz" type="text/javascript"></script>
+     <link rel="stylesheet" href="/champion-static/css/style.min.css?nl2s3fs3" />
+     <link rel="stylesheet" href="https://style.champion-fx.com/binary.css?nl2s3fs3" />
+      <script src="/champion-static/js/bundle.js?nl2s3fs3" type="text/javascript"></script>
+     <script src="https://style.champion-fx.com/binary.js?nl2s3fs3" type="text/javascript"></script>
      
 </head>
 <body>
@@ -228,13 +228,18 @@
     </ul>
                 <ul class="top-nav-menu invisible logged-in">
     
-        <li>
+        <li class="mt-hide">
             <a href="/champion-static/en/user/settings.html" class="nav-dropdown-toggle">Settings</a>
             
         </li>
     
-        <li>
+        <li class="mt-hide">
             <a href="/champion-static/en/cashier.html" class="nav-dropdown-toggle">Cashier</a>
+            
+        </li>
+    
+        <li>
+            <a href="/champion-static/en/user/metatrader.html" class="nav-dropdown-toggle">MetaTrader 5</a>
             
         </li>
     
@@ -294,7 +299,7 @@
                                 <ul>
                                     <div class="login-id-list"></div>
                                     <a href="/champion-static/en/user/metatrader.html">
-                                        <li>MetaTrader</li>
+                                        <li>MetaTrader 5</li>
                                     </a>
                                     <div class="separator-line-thin-gray"></div>
                                     <a href="javascript:;" class="btn-logout logout">
@@ -321,86 +326,99 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     <main class="page-content" aria-label="Content" id="champion-container">
         <div class="wrapper" id="champion-content">
-            <div class="fx-section">
-    <div id="mt_account_management" class="container">
-        <h1 class="main-title" >MetaTrader account management</h1>
-
-        <div id="mt_loading"><div class="barspinner dark">
+            <div class="container">
+    <div id="mt_loading" class="invisible"><div class="barspinner dark">
     <div class="rect1"></div>
     <div class="rect2"></div>
     <div class="rect3"></div>
     <div class="rect4"></div>
     <div class="rect5"></div>
 </div></div>
-
-        <div id="accounts_list" class="row"></div>
-
-        <div class="row">
-            <div class="fst-container col-xs-12">
-                <div id="main_msg" class="notice-msg center-text invisible"></div>
+    <div id="mt_account_management" class="row fill-bg-color">
+        <div id="mt_left_panel" class="mt-panel col-md-3 no-gutters">
+            <div class="top">
+                <div style="width: 80px; height: 80px; margin: 0 auto; background: #f2f2f2; border: 1px solid #004385; border-radius: 40px;"></div> <!-- TODO: replace with image -->
+            </div>
+            <div id="account_selector">
+                <h3 id="mt5_account" class="empty"><div class="barspinner dark">
+    <div class="rect1"></div>
+    <div class="rect2"></div>
+    <div class="rect3"></div>
+    <div class="rect4"></div>
+    <div class="rect5"></div>
+</div></h3>
+                <div id="accounts_list">
+                    <div></div>
+                </div>
+            </div>
+            <div id="account_detail">
+                <div class="loading"><div class="barspinner dark">
+    <div class="rect1"></div>
+    <div class="rect2"></div>
+    <div class="rect3"></div>
+    <div class="rect4"></div>
+    <div class="rect5"></div>
+</div></div>
+                <div class="acc-info mt-container has-account row invisible">
+                    <div class="col-xs-5">Login ID:</div><div data="login" class="col-xs-7"></div>
+                    <div class="col-xs-5">Name:</div><div data="name" class="col-xs-7"></div>
+                    <div class="col-xs-5">Balance:</div><div data="balance" class="col-xs-7"></div>
+                    <div class="col-xs-5 invisible">Leverage:</div><div data="leverage" class="col-xs-7 invisible"></div>
+                </div>
+                <div class="acc-actions has-account invisible">
+                    <a href="javascript:;" class="act_new_account invisible"></a>
+                    <a href="javascript:;" class="act_deposit">
+                        <img src="/champion-static/images/metatrader/deposit.svg" alt="" />
+                        Deposit
+                    </a>
+                    <a href="javascript:;" class="act_withdrawal">
+                        <img src="/champion-static/images/metatrader/withdraw.svg" alt="" />
+                        Withdraw
+                    </a>
+                    <a href="javascript:;" class="act_password_change">
+                        <img src="/champion-static/images/metatrader/password.svg" alt="" />
+                        Password
+                    </a>
+                </div>
+                <div id="account_desc" class="mt-container"></div>
+            </div>
+        </div>
+        <div id="mt_right_panel" class="mt-panel col-md-9 no-gutters">
+            <div class="top"></div>
+            <div class="fst-container mt-container">
                 <div id="fst_action" class="invisible">
                     <h4></h4>
                     <div class="separator primary-color"></div>
-                    <span class="close"></span>
-                    <div class="fx-divider"></div>
-                    <form id="frm_action"></form>
+                    <div id="main_msg" class="notice-msg center-text invisible"></div>
+                    <form id="frm_action" class="invisible"></form>
                 </div>
             </div>
         </div>
 
         <div id="templates" class="invisible">
-            <div class="acc-box col-xs-12 col-sm-6 col-md-6 col-lg-3">
-                <div>
-                    <h4 class="title"></h4>
-                    <div class="separator primary-color"></div>
-                    <div class="loading"><div class="barspinner dark">
-    <div class="rect1"></div>
-    <div class="rect2"></div>
-    <div class="rect3"></div>
-    <div class="rect4"></div>
-    <div class="rect5"></div>
-</div></div>
-                    <div class="no-account invisible">
-                        <div class="info"></div>
-                        <span class="button"><span class="act_new_account">Sign up</span></span>
-                    </div>
-                    <div class="acc-info has-account row invisible">
-                        <div class="col-xs-4">Login ID:</div><div data="login" class="col-xs-8"></div>
-                        <div class="col-xs-4">Name:</div><div data="name" class="col-xs-7"></div>
-                        <div class="col-xs-4">Balance:</div><div data="balance" class="col-xs-8"></div>
-                        <div class="col-xs-4 invisible">Leverage:</div><div data="leverage" class="col-xs-8 invisible"></div>
-                    </div>
-                    <div class="acc-actions has-account invisible">
-                        <a href="javascript:;" class="act_deposit">
-                            <img src="/champion-static/images/metatrader/deposit.svg" alt="" />
-                            Deposit
-                        </a>
-                        <a href="javascript:;" class="act_withdrawal">
-                            <img src="/champion-static/images/metatrader/withdraw.svg" alt="" />
-                            Withdraw
-                        </a>
-                        <a href="javascript:;" class="act_password_change">
-                            <img src="/champion-static/images/metatrader/password.svg" alt="" />
-                            Password
-                        </a>
-                    </div>
+            <div class="acc-name">
+                <div class="mt-new invisible">
+                    <img src="/champion-static/images/metatrader/signup.svg" />
                 </div>
+                <div class="mt-balance">&nbsp;</div>
+                <div class="mt-type"></div>
+                <div class="mt-login invisible"></div>
             </div>
 
-            <div id="no_account_info">
-                <div id="demo">Open a free Demo account.</div>
-                <div id="champion_cent">
+            <div class="account-desc">
+                <p class="demo_champion_cent demo_champion_standard demo_champion_stp">Demo account.</p>
+                <p class="real_champion_cent">
                     The Cent account offers the highest leverage, as well as low margin call and stop out level.
-                    <a href="/champion-static/en/forex/accounts/cent.html" target="_blank">Read more</a>
-                </div>
-                <div id="champion_standard">
+                    <a class="more" href="/champion-static/en/forex/accounts/cent.html" target="_blank">Read more</a>
+                </p>
+                <p class="real_champion_standard">
                     The Standard account is suitable for a wide range of traders, both new and experienced.
-                    <a href="/champion-static/en/forex/accounts/standard.html" target="_blank">Read more</a>
-                </div>
-                <div id="champion_stp">
+                    <a class="more" href="/champion-static/en/forex/accounts/standard.html" target="_blank">Read more</a>
+                </p>
+                <p class="real_champion_stp">
                     The STP account provides you with the tightest spreads and connects you directly to the market.
-                    <a href="/champion-static/en/forex/accounts/stp.html" target="_blank">Read more</a>
-                </div>
+                    <a class="more" href="/champion-static/en/forex/accounts/stp.html" target="_blank">Read more</a>
+                </p>
             </div>
 
             <form id="frm_new_account">
@@ -529,6 +547,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div class="submit-row ">
     <p id="msg_form" class="error-msg invisible"></p>
     <button id="btn_submit" type="submit">Deposit</button> </div>
+
+                <p>Need to transfer money to your ChampionFX Wallet or withdraw from ChampionFX Wallet to your own account? <a href="/champion-static/en/cashier.html">Go to Cashier</a></p>
             </form>
 
             <form id="frm_withdrawal">
@@ -565,6 +585,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div class="submit-row ">
     <p id="msg_form" class="error-msg invisible"></p>
     <button id="btn_submit" type="submit">Withdraw</button> </div>
+
+                <p>Need to transfer money to your ChampionFX Wallet or withdraw from ChampionFX Wallet to your own account? <a href="/champion-static/en/cashier.html">Go to Cashier</a></p>
             </form>
 
             <div id="messages">

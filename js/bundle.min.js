@@ -18537,6 +18537,7 @@
 	var ChampionRouter = __webpack_require__(432);
 	var SessionDurationLimit = __webpack_require__(433);
 	var ChampionSocket = __webpack_require__(420);
+	var State = __webpack_require__(423).State;
 	var default_redirect_url = __webpack_require__(426).default_redirect_url;
 	var url_for = __webpack_require__(426).url_for;
 	var Utility = __webpack_require__(424);
@@ -18617,6 +18618,7 @@
 
 	    var afterContentChange = function afterContentChange(e, content) {
 	        var page = content.getAttribute('data-page');
+	        State.set('current_page', page);
 	        var pages_map = {
 	            authenticate: { module: Authenticate, is_authenticated: true, only_real: true },
 	            cashier: { module: Cashier },
@@ -18953,7 +18955,8 @@
 	    };
 
 	    var getMT5AccountType = function getMT5AccountType(group) {
-	        return group ? /demo/.test(group) ? 'demo' : group.split('\\')[1] || '' : '';
+	        if (group === 'demo\\champion_virtual') group = 'demo\\champion_cent'; // TODO: remove this line (used for backward compatibility)
+	        return group ? group.replace('\\', '_') : '';
 	    };
 
 	    return {
@@ -36131,7 +36134,7 @@
 	            }
 	        });
 
-	        $(document).unbind('click').on('click', function (e) {
+	        $(document).off('click.mobileMenu').on('click.mobileMenu', function (e) {
 	            e.stopPropagation();
 	            if ($('.nav-menu-dropdown.slide-in').length) {
 	                Utility.slideOut($menu_dropdown);
@@ -36175,7 +36178,7 @@
 	            }
 	        });
 
-	        $(document).unbind('click').on('click', function (e) {
+	        $(document).off('click.desktopMenu').on('click.desktopMenu', function (e) {
 	            e.stopPropagation();
 	            Utility.animateDisappear($all_accounts);
 	        });
@@ -36199,6 +36202,10 @@
 	                    $('.main-account .account-id').html(curr_id);
 	                    loginid_select += '<div class="hidden-lg-up">\n                                        <span class="selected" href="javascript:;" value="' + curr_id + '">\n                                        <li><span class="nav-menu-icon pull-left ' + icon + '"></span>' + curr_id + '</li>\n                                        </span>\n                                       <div class="separator-line-thin-gray"></div></div>';
 	                } else {
+	                    if (State.get('current_page') === 'metatrader' && login.real && Client.is_virtual()) {
+	                        switchLoginId(curr_id);
+	                        return;
+	                    }
 	                    loginid_select += '<a href="javascript:;" value="' + curr_id + '">\n                                        <li>\n                                            <span class="hidden-lg-up nav-menu-icon pull-left ' + icon + '"></span>\n                                            <div>' + curr_id + '</div>\n                                            <div class="hidden-lg-down account-type">' + type + '</div>\n                                        </li>\n                                       </a>\n                                        <div class="separator-line-thin-gray"></div>';
 	                }
 	            }
@@ -37015,6 +37022,13 @@
 	                            $parent.append($('<div/>', { class: error_class + ' ' + hidden_class }));
 	                        }
 	                        field.$error = $parent.find('.' + error_class);
+	                        // Add indicator to required fields
+	                        if (field.validations.indexOf('req') >= 0) {
+	                            var $label = $parent.find('label');
+	                            if ($label.find('span.required').length === 0) {
+	                                $label.append($('<span/>', { class: 'required error-msg', text: '*' }));
+	                            }
+	                        }
 	                    }
 
 	                    var event = events_map[field.type];
@@ -38195,12 +38209,29 @@
 	            }
 	        });
 
+	        Client.set('mt5_account', getDefaultAccount(response.mt5_login_list));
+
 	        // Update types with no account
 	        Object.keys(types_info).forEach(function (acc_type) {
 	            if (!types_info[acc_type].account_info) {
 	                MetaTraderUI.updateAccount(acc_type);
 	            }
 	        });
+	    };
+
+	    var getDefaultAccount = function getDefaultAccount(login_list) {
+	        return (
+	            // remove hash from url
+	            // const url = window.location.href.split('#')[0];
+	            // window.history.replaceState({ url: url }, null, url);
+	            Object.keys(types_info).indexOf(location.hash.substring(1)) >= 0 ? location.hash.substring(1) : Client.get('mt5_account') || (login_list && login_list.length ? Client.getMT5AccountType((login_list.find(function (login) {
+	                return (/real/.test(login.group)
+	                );
+	            }) || login_list.find(function (login) {
+	                return (/demo/.test(login.group)
+	                );
+	            })).group) : 'demo_champion_cent')
+	        );
 	    };
 
 	    var getAccountDetails = function getAccountDetails(login, acc_type) {
@@ -38256,7 +38287,6 @@
 	                        MetaTraderUI.displayFormMessage(response.error.message);
 	                        MetaTraderUI.enableButton();
 	                    } else {
-	                        MetaTraderUI.closeForm();
 	                        MetaTraderUI.displayMainMessage(actions_info[action].success_msg(response));
 	                        getAccountDetails(actions_info[action].login ? actions_info[action].login(response) : types_info[acc_type].account_info.login, acc_type);
 	                        if (typeof actions_info[action].onSuccess === 'function') {
@@ -38269,7 +38299,10 @@
 	    };
 
 	    return {
-	        load: load
+	        load: load,
+	        unload: function unload() {
+	            MetaTraderUI.unload();
+	        }
 	    };
 	}();
 
@@ -38293,10 +38326,12 @@
 	    'use strict';
 
 	    var types_info = {
-	        demo: { account_type: 'demo', mt5_account_type: '', title: 'Demo', max_leverage: 1000, is_demo: true },
-	        champion_cent: { account_type: 'financial', mt5_account_type: 'cent', title: 'Real Cent', max_leverage: 1000 },
-	        champion_standard: { account_type: 'financial', mt5_account_type: 'standard', title: 'Real Standard', max_leverage: 300 },
-	        champion_stp: { account_type: 'financial', mt5_account_type: 'stp', title: 'Real STP', max_leverage: 100 }
+	        demo_champion_cent: { account_type: 'demo', mt5_account_type: 'cent', title: 'Demo Cent', order: 1, max_leverage: 1000, is_demo: true },
+	        demo_champion_standard: { account_type: 'demo', mt5_account_type: 'standard', title: 'Demo Standard', order: 3, max_leverage: 300, is_demo: true },
+	        demo_champion_stp: { account_type: 'demo', mt5_account_type: 'stp', title: 'Demo STP', order: 5, max_leverage: 100, is_demo: true },
+	        real_champion_cent: { account_type: 'financial', mt5_account_type: 'cent', title: 'Real Cent', order: 2, max_leverage: 1000 },
+	        real_champion_standard: { account_type: 'financial', mt5_account_type: 'standard', title: 'Real Standard', order: 4, max_leverage: 300 },
+	        real_champion_stp: { account_type: 'financial', mt5_account_type: 'stp', title: 'Real STP', order: 6, max_leverage: 100 }
 	    };
 
 	    var needsRealMessage = function needsRealMessage() {
@@ -38305,7 +38340,7 @@
 
 	    var actions_info = {
 	        new_account: {
-	            title: 'Create Account',
+	            title: 'Sign Up',
 	            success_msg: function success_msg(response) {
 	                return 'Congratulations! Your [_1] Account has been created.'.replace('[_1]', types_info[response.mt5_new_account.account_type === 'financial' ? 'champion_' + response.mt5_new_account.mt5_account_type : response.mt5_new_account.account_type].title);
 	            },
@@ -38512,6 +38547,7 @@
 	'use strict';
 
 	var MetaTraderConfig = __webpack_require__(451);
+	var Client = __webpack_require__(301);
 	var formatMoney = __webpack_require__(430).formatMoney;
 	var showLoadingImage = __webpack_require__(424).showLoadingImage;
 	var Validation = __webpack_require__(438);
@@ -38520,7 +38556,10 @@
 	    'use strict';
 
 	    var $container = void 0,
+	        $list_cont = void 0,
+	        $mt5_account = void 0,
 	        $list = void 0,
+	        $detail = void 0,
 	        $action = void 0,
 	        $templates = void 0,
 	        _$form = void 0,
@@ -38534,38 +38573,78 @@
 	    var validations = MetaTraderConfig.validations;
 
 	    var init = function init(submit_func) {
+	        $('#header .mt-hide').addClass(hidden_class);
 	        submit = submit_func;
 	        $container = $('#mt_account_management');
-	        $list = $container.find('#accounts_list');
+	        $mt5_account = $container.find('#mt5_account');
+	        $list_cont = $container.find('#accounts_list');
+	        $list = $list_cont.find('> div');
+	        $detail = $container.find('#account_detail');
 	        $action = $container.find('#fst_action');
 	        $templates = $container.find('#templates');
 	        $main_msg = $container.find('#main_msg');
 	        $container.find('#mt_loading').remove();
+	        $detail.find('[class*="act_"]').click(populateForm);
 
 	        populateAccountList();
 	    };
 
 	    var populateAccountList = function populateAccountList() {
-	        var $acc_box = $templates.find('> .acc-box');
-	        Object.keys(types_info).forEach(function (acc_type) {
+	        var $acc_name = $templates.find('> .acc-name');
+	        Object.keys(types_info).sort(function (a, b) {
+	            return types_info[a].order > types_info[b].order;
+	        }).forEach(function (acc_type) {
 	            if ($list.find('#' + acc_type).length === 0) {
-	                var $acc_item = $acc_box.clone();
-
-	                // set values
-	                $acc_item.attr('id', acc_type);
-	                $acc_item.find('.title').text(types_info[acc_type].title);
-
-	                // exceptions for demo account
-	                if (types_info[acc_type].is_demo) {
-	                    $acc_item.find('.act_deposit, .act_withdrawal').remove();
-	                }
+	                var $acc_item = $acc_name.clone();
+	                $acc_item.attr('value', acc_type);
 	                $list.append($acc_item);
 	            }
 	        });
-	        $list.find('[class*="act_"]').click(populateForm);
-	        $action.find('.close').click(function () {
-	            closeForm(true);
+
+	        var hideList = function hideList() {
+	            $list_cont.slideUp('fast', function () {
+	                $mt5_account.removeClass('open');
+	            });
+	        };
+
+	        $mt5_account.off('click').on('click', function (e) {
+	            e.stopPropagation();
+	            if ($list_cont.is(':hidden')) {
+	                $mt5_account.addClass('open');
+	                $list_cont.slideDown('fast');
+	            } else {
+	                hideList();
+	            }
 	        });
+	        $list.off('click').on('click', '.acc-name', function () {
+	            setAccountType($(this).attr('value'), true);
+	        });
+	        $(document).off('click.mt5_account_list').on('click.mt5_account_list', function () {
+	            hideList();
+	        });
+	    };
+
+	    var setAccountType = function setAccountType(acc_type, should_set_account) {
+	        if ($mt5_account.attr('value') !== acc_type) {
+	            Client.set('mt5_account', acc_type);
+	            $mt5_account.attr('value', acc_type).html(types_info[acc_type].title).removeClass('empty');
+	            $action.addClass(hidden_class);
+	            if (should_set_account) {
+	                setCurrentAccount(acc_type);
+	            }
+	        }
+	    };
+
+	    var updateListItem = function updateListItem(acc_type) {
+	        var $acc_item = $list.find('[value=' + acc_type + ']');
+	        $acc_item.find('.mt-type').text('' + types_info[acc_type].title);
+	        if (types_info[acc_type].account_info) {
+	            $acc_item.find('.mt-login').text(types_info[acc_type].account_info.login);
+	            $acc_item.find('.mt-balance').text(formatMoney(+types_info[acc_type].account_info.balance, 'USD'));
+	            $acc_item.find('.mt-new').addClass(hidden_class);
+	        } else {
+	            $acc_item.find('.mt-new').removeClass(hidden_class);
+	        }
 	    };
 
 	    var displayLoadingAccount = function displayLoadingAccount(acc_type) {
@@ -38575,47 +38654,57 @@
 	    };
 
 	    var updateAccount = function updateAccount(acc_type) {
-	        var $acc_item = $list.find('#' + acc_type);
-	        $acc_item.find('.loading').addClass(hidden_class);
+	        updateListItem(acc_type);
+	        setCurrentAccount(acc_type);
+	    };
+
+	    var setCurrentAccount = function setCurrentAccount(acc_type) {
+	        if (acc_type !== Client.get('mt5_account')) return;
+
+	        $detail.find('#account_desc').html($templates.find('.account-desc .' + acc_type).clone());
+
 	        if (types_info[acc_type].account_info) {
 	            // Update account info
-	            $acc_item.find('.acc-info div[data]').map(function () {
+	            $detail.find('.acc-info div[data]').map(function () {
 	                var key = $(this).attr('data');
 	                var info = types_info[acc_type].account_info[key];
 	                $(this).text(key === 'balance' ? formatMoney(+info, 'USD') : key === 'leverage' ? '1:' + info : info);
 	            });
-	            $acc_item.find('.has-account').removeClass(hidden_class);
-	        } else {
-	            $acc_item.find('.no-account').removeClass(hidden_class).find('.info').html($templates.find('#' + acc_type));
+	            $detail.find('.act_deposit, .act_withdrawal')[types_info[acc_type].is_demo ? 'addClass' : 'removeClass'](hidden_class);
+	            $detail.find('.has-account').removeClass(hidden_class);
+	            $detail.find('#account_desc .more').addClass(hidden_class);
+	        }
+	        $detail.find('.loading').addClass(hidden_class);
 
-	            // Display account creation form if url has a hash like: #create_champion_cent
-	            var hash = window.location.hash;
-	            if (hash && hash === '#create_' + acc_type) {
-	                $acc_item.find('.act_new_account').click();
-	                // remove hash from url
-	                var url = window.location.href.split('#')[0];
-	                window.history.replaceState({ url: url }, null, url);
-	            }
+	        setAccountType(acc_type);
+
+	        var default_action = types_info[acc_type].account_info ? types_info[acc_type].is_demo ? 'password_change' : 'deposit' : 'new_account';
+	        if ($action.hasClass(hidden_class)) {
+	            $('.acc-actions a[class*=act_' + default_action + ']').click();
 	        }
 	    };
 
 	    var populateForm = function populateForm(e) {
-	        closeForm();
 	        var $target = $(e.target);
 	        if ($target.prop('tagName').toLowerCase() === 'img') {
 	            $target = $target.parents('a');
 	        }
-	        var acc_type = $target.parents('.acc-box').attr('id');
-	        var action = $target.attr('class').match(/act_(.*)/)[1];
+
+	        var acc_type = Client.get('mt5_account');
+	        var action = $target.attr('class').split(' ').find(function (c) {
+	            return (/^act_/.test(c)
+	            );
+	        }).replace('act_', '');
 
 	        // set active
-	        $list.find('.acc-box[id!="' + acc_type + '"] > div').removeClass('active');
-	        $list.find('#' + acc_type + ' > div').addClass('active');
+	        $detail.find('[class*="act_"]').removeClass('selected');
+	        $target.addClass('selected');
 
 	        actions_info[action].prerequisites(acc_type).then(function (error_msg) {
 	            if (error_msg) {
 	                // does not meet one of prerequisites
 	                displayMainMessage(error_msg);
+	                $action.find('#frm_action').addClass(hidden_class);
 	                return;
 	            }
 
@@ -38626,24 +38715,12 @@
 	            _$form.find('#btn_submit').attr({ acc_type: acc_type, action: action }).on('click dblclick', submit);
 
 	            // update title, append form
-	            $action.find('h4').text(types_info[acc_type].title + ': ' + actions_info[action].title).end().find('#frm_action').html(_$form).end().removeClass(hidden_class);
-	            $.scrollTo($action, 500, { offset: -7 });
+	            $action.find('h4').text(actions_info[action].title);
+	            $action.find('#frm_action').html(_$form).removeClass(hidden_class);
+	            $action.find('#main_msg').addClass(hidden_class).end().removeClass(hidden_class);
+	            // $.scrollTo($action, 500, { offset: -7 });
 	            Validation.init('#frm_' + action, validations[action]);
 	        });
-	    };
-
-	    var closeForm = function closeForm(should_scroll) {
-	        if (_$form && _$form.length) {
-	            _$form.find('#btn_submit').off('click dblclick', submit);
-	            _$form.empty();
-	            _$form = undefined;
-	            $action.addClass(hidden_class);
-	            $list.find('.acc-box > div').removeClass('active');
-	            if (should_scroll) {
-	                $.scrollTo($list, 500, { offset: -10 });
-	            }
-	        }
-	        $main_msg.empty().addClass(hidden_class);
 	    };
 
 	    var postValidate = function postValidate(acc_type, action) {
@@ -38690,13 +38767,15 @@
 	        },
 	        displayLoadingAccount: displayLoadingAccount,
 	        updateAccount: updateAccount,
-	        closeForm: closeForm,
 	        postValidate: postValidate,
 	        hideFormMessage: hideFormMessage,
 	        displayFormMessage: displayFormMessage,
 	        displayMainMessage: displayMainMessage,
 	        disableButton: disableButton,
-	        enableButton: enableButton
+	        enableButton: enableButton,
+	        unload: function unload() {
+	            $('#header .mt-hide').removeClass(hidden_class);
+	        }
 	    };
 	}();
 
