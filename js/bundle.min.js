@@ -36161,9 +36161,10 @@
 	        });
 
 	        if (!Client.is_logged_in()) {
-	            $('#topbar, #header').removeClass('logged-in').find('.logged-out').removeClass(hidden_class);
+	            $('#top_group').removeClass('logged-in').find('.logged-out').removeClass(hidden_class);
 	            return;
 	        }
+	        updateBody();
 
 	        $('#header .logged-in').removeClass(hidden_class);
 	        $all_accounts.find('.account > a').removeClass('menu-icon');
@@ -36182,6 +36183,10 @@
 	            e.stopPropagation();
 	            Utility.animateDisappear($all_accounts);
 	        });
+	    };
+
+	    var updateBody = function updateBody() {
+	        $('body').css('padding-top', $('#top_group').height());
 	    };
 
 	    var userMenu = function userMenu() {
@@ -36221,7 +36226,7 @@
 	    var displayNotification = function displayNotification(message) {
 	        var $msg_notification = $('#msg_notification');
 	        $msg_notification.html(message);
-	        if ($msg_notification.is(':hidden')) $msg_notification.slideDown(500);
+	        if ($msg_notification.is(':hidden')) $msg_notification.slideDown(500, updateBody);
 	    };
 
 	    var hideNotification = function hideNotification() {

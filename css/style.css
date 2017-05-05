@@ -781,9 +781,6 @@ fieldset {
   background: #fff;
   color: #013365;
 }
-#topbar.logged-in {
-  display: none;
-}
 
 .languages {
   padding: 0;
@@ -1411,70 +1408,80 @@ iframe {
 #header .top-nav-menu ul li a.active {
   border-bottom: none;
 }
-#header.logged-in {
+
+#top_group.logged-in {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 99;
+}
+#top_group.logged-in #topbar {
+  display: none;
+}
+#top_group.logged-in #header {
   border: none;
 }
-#header.logged-in .logo-parent {
+#top_group.logged-in #header .logo-parent {
   padding: 5px 0;
 }
-#header.logged-in .logo-parent .logo, #header.logged-in .logo-parent .logo > div {
+#top_group.logged-in #header .logo-parent .logo, #top_group.logged-in #header .logo-parent .logo > div {
   width: 40px;
   height: 40px;
 }
-#header.logged-in .logo-parent .binary-logo-text > div {
+#top_group.logged-in #header .logo-parent .binary-logo-text > div {
   margin-top: 5px;
 }
-#header.logged-in .top-nav-menu {
+#top_group.logged-in #header .top-nav-menu {
   float: none;
   margin-left: 0;
 }
-#header.logged-in .top-nav-menu li a {
+#top_group.logged-in #header .top-nav-menu li a {
   padding: 5px 15px;
   border-bottom: none;
 }
-#header.logged-in, #header.logged-in #main-logout, #header.logged-in #main-account {
+#top_group.logged-in #header, #top_group.logged-in #header #main-logout, #top_group.logged-in #header #main-account {
   height: 50px;
 }
-#header.logged-in #main-logout, #header.logged-in .main-nav {
+#top_group.logged-in #header #main-logout, #top_group.logged-in #header .main-nav {
   width: auto;
   min-width: 160px;
   white-space: nowrap;
 }
-#header.logged-in .account-balance {
+#top_group.logged-in #header .account-balance {
   font-size: 13px;
 }
-#header.logged-in .account-type {
+#top_group.logged-in #header .account-type {
   font-size: 11px;
 }
-#header.logged-in .main-nav li {
+#top_group.logged-in #header .main-nav li {
   text-align: left;
 }
-#header.logged-in .main-nav li a {
+#top_group.logged-in #header .main-nav li a {
   padding: 0 15px;
 }
-#header.logged-in .main-nav li .nav-caret {
+#top_group.logged-in #header .main-nav li .nav-caret {
   position: absolute;
   top: 20px;
   right: 10px;
 }
-#header.logged-in #all-accounts, #header.logged-in #all-accounts li ul {
+#top_group.logged-in #header #all-accounts, #top_group.logged-in #header #all-accounts li ul {
   background: #004385;
   border: none;
 }
-#header.logged-in #all-accounts a {
+#top_group.logged-in #header #all-accounts a {
   color: #fff;
 }
-#header.logged-in #all-accounts > li a {
+#top_group.logged-in #header #all-accounts > li a {
   margin: 1px 1px 0 0;
 }
-#header.logged-in #all-accounts ul {
+#top_group.logged-in #header #all-accounts ul {
   margin-left: 0;
 }
-#header.logged-in #all-accounts ul li:hover {
+#top_group.logged-in #header #all-accounts ul li:hover {
   opacity: 0.7;
   background: none;
 }
-#header.logged-in #all-accounts ul .separator-line-thin-gray {
+#top_group.logged-in #header #all-accounts ul .separator-line-thin-gray {
   opacity: 0.5;
   margin: 0 15px;
 }
@@ -1662,6 +1669,8 @@ button .barspinner.white {
   padding: 0 20px;
   box-sizing: border-box;
   margin: 0;
+  background: #004385;
+  color: #fff;
   border-radius: 5px;
 }
 #mt_account_management #account_selector #mt5_account.open {
@@ -1674,11 +1683,11 @@ button .barspinner.white {
 #mt_account_management #account_selector #mt5_account:after {
   content: '';
   display: block;
-  border-left: 5px solid transparent;
   float: right;
   margin-top: 17px;
+  border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 5px solid #004385;
+  border-top: 5px solid #fff;
 }
 #mt_account_management #account_selector #mt5_account.empty:after {
   display: none;
