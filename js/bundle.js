@@ -38595,12 +38595,17 @@
 
 	    var populateAccountList = function populateAccountList() {
 	        var $acc_name = $templates.find('> .acc-name');
+	        var no_real = Client.is_virtual() && !Client.has_real();
+	        $('#top_msg')[no_real ? 'removeClass' : 'addClass'](hidden_class);
 	        Object.keys(types_info).sort(function (a, b) {
 	            return types_info[a].order > types_info[b].order;
 	        }).forEach(function (acc_type) {
 	            if ($list.find('#' + acc_type).length === 0) {
 	                var $acc_item = $acc_name.clone();
 	                $acc_item.attr('value', acc_type);
+	                if (no_real && /real/.test(acc_type)) {
+	                    $acc_item.addClass('disabled');
+	                }
 	                $list.append($acc_item);
 	            }
 	        });
@@ -38622,7 +38627,9 @@
 	            }
 	        });
 	        $list.off('click').on('click', '.acc-name', function () {
-	            setAccountType($(this).attr('value'), true);
+	            if (!$(this).hasClass('disabled')) {
+	                setAccountType($(this).attr('value'), true);
+	            }
 	        });
 	        $(document).off('click.mt5_account_list').on('click.mt5_account_list', function () {
 	            hideList();
@@ -38687,7 +38694,7 @@
 	    };
 
 	    var loadAction = function loadAction(action) {
-	        $detail.find('.acc-actions a[class*=act_' + action + ']').click();
+	        $detail.find('.acc-actions > [class*=act_' + action + ']').click();
 	    };
 
 	    var populateForm = function populateForm(e) {

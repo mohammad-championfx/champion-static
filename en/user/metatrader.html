@@ -343,7 +343,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </div></div>
     <div id="mt_account_management" class="row fill-bg-color invisible">
         <div id="mt_left_panel" class="mt-panel col-lg-3 col-md-4 no-gutters">
-            <div class="top">
+            <div class="top hidden-sm-down">
                 <div style="width: 80px; height: 80px; margin: 0 auto; background: #f2f2f2; border: 1px solid #004385; border-radius: 40px;"></div> <!-- TODO: replace with image -->
             </div>
             <div id="account_selector">
@@ -360,25 +360,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <div class="col-xs-5 invisible">Leverage:</div><div data="leverage" class="col-xs-7 invisible"></div>
                 </div>
                 <div class="acc-actions has-account invisible">
-                    <a href="javascript:;" class="act_new_account invisible"></a>
+                    <span class="act_new_account invisible"></span>
                     <a href="javascript:;" class="act_deposit">
                         <img src="/champion-static/images/metatrader/deposit.svg" alt="" />
-                        Deposit
+                        <span>Deposit</span>
                     </a>
                     <a href="javascript:;" class="act_withdrawal">
                         <img src="/champion-static/images/metatrader/withdraw.svg" alt="" />
-                        Withdraw
+                        <span>Withdraw</span>
                     </a>
                     <a href="javascript:;" class="act_password_change">
                         <img src="/champion-static/images/metatrader/password.svg" alt="" />
-                        Password
+                        <span>Password</span>
                     </a>
                 </div>
                 <div id="account_desc" class="mt-container"></div>
             </div>
         </div>
         <div id="mt_right_panel" class="mt-panel col-lg-9 col-md-8 no-gutters">
-            <div class="top"></div>
+            <div class="top mt-container hidden-sm-down">
+                <div id="top_msg" class="notice-msg center-text invisible">Please <a href="/champion-static/en/new-account/real.html">upgrade</a> to be able to create real MetaTrader 5 accounts.</div>
+            </div>
             <div class="fst-container mt-container">
                 <div id="fst_action" class="invisible">
                     <h4></h4>
@@ -400,7 +402,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </div>
 
             <div class="account-desc">
-                <p class="demo_champion_cent demo_champion_standard demo_champion_stp">Demo account.</p>
+                <p class="demo_champion_cent demo_champion_standard demo_champion_stp"></p>
                 <p class="real_champion_cent">
                     The Cent account offers the highest leverage, as well as low margin call and stop out level.
                     <a class="more" href="/champion-static/en/forex/accounts/cent.html" target="_blank">Read more</a>
