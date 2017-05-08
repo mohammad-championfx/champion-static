@@ -36164,6 +36164,7 @@
 	            $('#top_group').removeClass('logged-in').find('.logged-out').removeClass(hidden_class);
 	            return;
 	        }
+	        $(window).off('resize.updateBody').on('resize.updateBody', updateBody);
 	        updateBody();
 
 	        $('#header .logged-in').removeClass(hidden_class);
@@ -36186,7 +36187,7 @@
 	    };
 
 	    var updateBody = function updateBody() {
-	        $('body').css('padding-top', $('#top_group').height());
+	        $('#champion-container').css('margin-top', $('#top_group').height());
 	    };
 
 	    var userMenu = function userMenu() {
@@ -38599,7 +38600,7 @@
 	        $('#top_msg')[no_real ? 'removeClass' : 'addClass'](hidden_class);
 	        Object.keys(types_info).sort(function (a, b) {
 	            return types_info[a].order > types_info[b].order;
-	        }).forEach(function (acc_type) {
+	        }).forEach(function (acc_type, idx) {
 	            if ($list.find('#' + acc_type).length === 0) {
 	                var $acc_item = $acc_name.clone();
 	                $acc_item.attr('value', acc_type);
@@ -38607,6 +38608,9 @@
 	                    $acc_item.addClass('disabled');
 	                }
 	                $list.append($acc_item);
+	                if (idx % 2 === 1 && idx < Object.keys(types_info).length - 1) {
+	                    $list.append($('<div/>', { class: 'separator fill-bg-color' }));
+	                }
 	            }
 	        });
 

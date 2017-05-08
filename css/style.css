@@ -1485,6 +1485,9 @@ iframe {
   opacity: 0.5;
   margin: 0 15px;
 }
+#top_group.logged-in ~ #champion-container {
+  margin-top: 50px;
+}
 
 .main-nav > li > ul {
   box-sizing: content-box;
@@ -1704,13 +1707,6 @@ button .barspinner.white {
   color: #004385;
   background: #f2f2f2;
 }
-#mt_account_management #account_selector #accounts_list .acc-name:nth-child(2):after, #mt_account_management #account_selector #accounts_list .acc-name:nth-child(4):after {
-  content: '';
-  display: block;
-  height: 2px;
-  background: #f2f2f2;
-  margin: 10px 0;
-}
 #mt_account_management #account_selector #accounts_list .acc-name.disabled {
   color: #c2c2c2;
 }
@@ -1728,6 +1724,9 @@ button .barspinner.white {
 }
 #mt_account_management #account_selector #accounts_list .acc-name .mt-new img {
   width: 14px;
+}
+#mt_account_management #account_selector #accounts_list .separator {
+  margin: 10px 0;
 }
 #mt_account_management #account_detail .acc-info {
   font-size: 13px;
