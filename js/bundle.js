@@ -38703,7 +38703,7 @@
 
 	    var populateForm = function populateForm(e) {
 	        var $target = $(e.target);
-	        if ($target.prop('tagName').toLowerCase() === 'img') {
+	        if ($target.prop('tagName').toLowerCase() !== 'a') {
 	            $target = $target.parents('a');
 	        }
 
@@ -38722,7 +38722,7 @@
 	            if (error_msg) {
 	                // does not meet one of prerequisites
 	                displayMainMessage(error_msg);
-	                $action.find('#frm_action').addClass(hidden_class);
+	                $action.find('#frm_action').empty();
 	                return;
 	            }
 
