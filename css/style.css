@@ -1796,6 +1796,9 @@ button .barspinner.white {
     text-align: center;
     padding: 10px !important;
   }
+  #mt_account_management .acc-actions a.invisible {
+    display: none !important;
+  }
   #mt_account_management .acc-actions a:hover, #mt_account_management .acc-actions a.selected {
     border-right: 0 !important;
     border-bottom: 5px solid #004385;
