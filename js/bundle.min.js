@@ -38588,7 +38588,6 @@
 	        $action = $container.find('#fst_action');
 	        $templates = $container.find('#templates');
 	        $main_msg = $container.find('#main_msg');
-	        $container.find('#mt_loading').remove();
 	        $detail.find('[class*="act_"]').click(populateForm);
 
 	        populateAccountList();
@@ -38678,8 +38677,11 @@
 	            $detail.find('.act_deposit, .act_withdrawal')[types_info[acc_type].is_demo ? 'addClass' : 'removeClass'](hidden_class);
 	            $detail.find('.has-account').removeClass(hidden_class);
 	            $detail.find('#account_desc .more').addClass(hidden_class);
+	        } else {
+	            $detail.find('.acc-info, .acc-actions').addClass(hidden_class);
 	        }
-	        $detail.find('.loading').addClass(hidden_class);
+	        $('#mt_loading').remove();
+	        $container.removeClass(hidden_class);
 
 	        setAccountType(acc_type);
 
