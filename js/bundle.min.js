@@ -38240,7 +38240,6 @@
 	    };
 
 	    var getAccountDetails = function getAccountDetails(login, acc_type) {
-	        MetaTraderUI.displayLoadingAccount(acc_type);
 	        ChampionSocket.send({
 	            mt5_get_settings: 1,
 	            login: login
@@ -38290,14 +38289,15 @@
 	                ChampionSocket.send(req).then(function (response) {
 	                    if (response.error) {
 	                        MetaTraderUI.displayFormMessage(response.error.message);
-	                        MetaTraderUI.enableButton();
 	                    } else {
+	                        MetaTraderUI.loadAction(action);
 	                        MetaTraderUI.displayMainMessage(actions_info[action].success_msg(response));
 	                        getAccountDetails(actions_info[action].login ? actions_info[action].login(response) : types_info[acc_type].account_info.login, acc_type);
 	                        if (typeof actions_info[action].onSuccess === 'function') {
 	                            actions_info[action].onSuccess(response, acc_type);
 	                        }
 	                    }
+	                    MetaTraderUI.enableButton();
 	                });
 	            });
 	        }
@@ -38378,7 +38378,7 @@
 	                });
 	            },
 	            onSuccess: function onSuccess(response, acc_type) {
-	                var type = types_info[acc_type].mt5_account_type || 'demo';
+	                var type = types_info[acc_type].account_type + '_' + types_info[acc_type].mt5_account_type;
 	                var gtm_data = {
 	                    event: 'mt5_new_account',
 	                    bom_email: Client.get('email'),
@@ -38611,6 +38611,7 @@
 	            });
 	        };
 
+	        // account switch events
 	        $mt5_account.off('click').on('click', function (e) {
 	            e.stopPropagation();
 	            if ($list_cont.is(':hidden')) {
@@ -38639,6 +38640,11 @@
 	        }
 	    };
 
+	    var updateAccount = function updateAccount(acc_type) {
+	        updateListItem(acc_type);
+	        setCurrentAccount(acc_type);
+	    };
+
 	    var updateListItem = function updateListItem(acc_type) {
 	        var $acc_item = $list.find('[value=' + acc_type + ']');
 	        $acc_item.find('.mt-type').text('' + types_info[acc_type].title);
@@ -38649,17 +38655,6 @@
 	        } else {
 	            $acc_item.find('.mt-new').removeClass(hidden_class);
 	        }
-	    };
-
-	    var displayLoadingAccount = function displayLoadingAccount(acc_type) {
-	        var $acc_item = $list.find('#' + acc_type);
-	        $acc_item.find('> div > div:not(.title, .separator)').addClass(hidden_class);
-	        $acc_item.find('.loading').removeClass(hidden_class);
-	    };
-
-	    var updateAccount = function updateAccount(acc_type) {
-	        updateListItem(acc_type);
-	        setCurrentAccount(acc_type);
 	    };
 
 	    var setCurrentAccount = function setCurrentAccount(acc_type) {
@@ -38687,8 +38682,12 @@
 
 	        var default_action = types_info[acc_type].account_info ? types_info[acc_type].is_demo ? 'password_change' : 'deposit' : 'new_account';
 	        if ($action.hasClass(hidden_class)) {
-	            $('.acc-actions a[class*=act_' + default_action + ']').click();
+	            loadAction(default_action);
 	        }
+	    };
+
+	    var loadAction = function loadAction(action) {
+	        $detail.find('.acc-actions a[class*=act_' + action + ']').click();
 	    };
 
 	    var populateForm = function populateForm(e) {
@@ -38703,9 +38702,10 @@
 	            );
 	        }).replace('act_', '');
 
-	        // set active
+	        // set active, update title
 	        $detail.find('[class*="act_"]').removeClass('selected');
 	        $target.addClass('selected');
+	        $action.find('h4').text(actions_info[action].title);
 
 	        actions_info[action].prerequisites(acc_type).then(function (error_msg) {
 	            if (error_msg) {
@@ -38715,16 +38715,18 @@
 	                return;
 	            }
 
+	            if (!$action.find('#frm_' + action).length) {
+	                $main_msg.addClass(hidden_class);
+	            }
+
 	            // clone form, event listener
 	            _$form = $templates.find('#frm_' + action).clone();
 	            var formValues = actions_info[action].formValues;
 	            if (formValues) formValues(_$form, acc_type, action);
 	            _$form.find('#btn_submit').attr({ acc_type: acc_type, action: action }).on('click dblclick', submit);
 
-	            // update title, append form
-	            $action.find('h4').text(actions_info[action].title);
-	            $action.find('#frm_action').html(_$form).removeClass(hidden_class);
-	            $action.find('#main_msg').addClass(hidden_class).end().removeClass(hidden_class);
+	            // append form
+	            $action.find('#frm_action').html(_$form).removeClass(hidden_class).end().removeClass(hidden_class);
 	            // $.scrollTo($action, 500, { offset: -7 });
 	            Validation.init('#frm_' + action, validations[action]);
 	        });
@@ -38747,7 +38749,7 @@
 
 	    var displayMainMessage = function displayMainMessage(message) {
 	        $main_msg.html(message).removeClass(hidden_class);
-	        $.scrollTo($main_msg, 500, { offset: -10 });
+	        $.scrollTo($action, 500, { offset: -80 });
 	    };
 
 	    var disableButton = function disableButton() {
@@ -38772,7 +38774,7 @@
 	        $form: function $form() {
 	            return _$form;
 	        },
-	        displayLoadingAccount: displayLoadingAccount,
+	        loadAction: loadAction,
 	        updateAccount: updateAccount,
 	        postValidate: postValidate,
 	        hideFormMessage: hideFormMessage,
