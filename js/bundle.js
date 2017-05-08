@@ -38698,7 +38698,7 @@
 	    };
 
 	    var loadAction = function loadAction(action) {
-	        $detail.find('.acc-actions > [class*=act_' + action + ']').click();
+	        $detail.find('.acc-actions [class*=act_' + action + ']').click();
 	    };
 
 	    var populateForm = function populateForm(e) {
