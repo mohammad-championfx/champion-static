@@ -18532,9 +18532,9 @@
 	var Client = __webpack_require__(301);
 	var GTM = __webpack_require__(427);
 	var Header = __webpack_require__(429);
-	var LoggedIn = __webpack_require__(431);
+	var LoggedIn = __webpack_require__(432);
 	var Login = __webpack_require__(428);
-	var ChampionRouter = __webpack_require__(432);
+	var ChampionRouter = __webpack_require__(431);
 	var SessionDurationLimit = __webpack_require__(433);
 	var ChampionSocket = __webpack_require__(420);
 	var State = __webpack_require__(423).State;
@@ -36075,6 +36075,7 @@
 	var Client = __webpack_require__(301);
 	var formatMoney = __webpack_require__(430).formatMoney;
 	var GTM = __webpack_require__(427);
+	var ChampionRouter = __webpack_require__(431);
 	var ChampionSocket = __webpack_require__(420);
 	var State = __webpack_require__(423).State;
 	var url_for = __webpack_require__(426).url_for;
@@ -36196,32 +36197,43 @@
 	        }
 
 	        var loginid_select = '';
+	        var is_mt_page = State.get('current_page') === 'metatrader';
 	        Client.get('loginid_array').forEach(function (login) {
 	            if (!login.disabled) {
 	                var curr_id = login.id;
 	                var type = '(' + (login.real ? 'Real' : 'Virtual') + ' Account)';
 	                var icon = login.real ? 'fx-real-icon' : 'fx-virtual-icon';
+	                var is_current = curr_id === Client.get('loginid');
 
 	                // default account
-	                if (curr_id === Client.get('loginid')) {
+	                if (is_current) {
 	                    $('.main-account .account-type').html(type);
 	                    $('.main-account .account-id').html(curr_id);
 	                    loginid_select += '<div class="hidden-lg-up">\n                                        <span class="selected" href="javascript:;" value="' + curr_id + '">\n                                        <li><span class="nav-menu-icon pull-left ' + icon + '"></span>' + curr_id + '</li>\n                                        </span>\n                                       <div class="separator-line-thin-gray"></div></div>';
-	                } else {
-	                    if (State.get('current_page') === 'metatrader' && login.real && Client.is_virtual()) {
-	                        switchLoginId(curr_id);
-	                        return;
-	                    }
-	                    loginid_select += '<a href="javascript:;" value="' + curr_id + '">\n                                        <li>\n                                            <span class="hidden-lg-up nav-menu-icon pull-left ' + icon + '"></span>\n                                            <div>' + curr_id + '</div>\n                                            <div class="hidden-lg-down account-type">' + type + '</div>\n                                        </li>\n                                       </a>\n                                        <div class="separator-line-thin-gray"></div>';
+	                } else if (is_mt_page && login.real && Client.is_virtual()) {
+	                    switchLoginId(curr_id);
+	                    return;
 	                }
+	                var item_class = is_current ? 'mt-show' : '';
+	                loginid_select += '<a href="javascript:;" value="' + curr_id + '" class="' + item_class + '">\n                                        <li>\n                                            <span class="hidden-lg-up nav-menu-icon pull-left ' + icon + '"></span>\n                                            <div>' + curr_id + '</div>\n                                            <div class="hidden-lg-down account-type">' + type + '</div>\n                                        </li>\n                                   </a>\n                                   <div class="separator-line-thin-gray ' + item_class + '"></div>';
 	            }
 	        });
 	        $('.login-id-list').html(loginid_select);
+	        $('#mobile-menu .mt-show').remove();
+	        setMetaTrader(is_mt_page);
 	        $('.login-id-list a').off('click').on('click', function (e) {
 	            e.preventDefault();
 	            $(this).attr('disabled', 'disabled');
 	            switchLoginId($(this).attr('value'));
+	            if (State.get('current_page') === 'metatrader') {
+	                ChampionRouter.forward(url_for('user/settings'));
+	            }
 	        });
+	    };
+
+	    var setMetaTrader = function setMetaTrader(is_mt_page) {
+	        $('#header .mt-hide')[is_mt_page ? 'addClass' : 'removeClass'](hidden_class);
+	        $('#header .mt-show')[is_mt_page ? 'removeClass' : 'addClass'](hidden_class);
 	    };
 
 	    var displayNotification = function displayNotification(message) {
@@ -36298,7 +36310,7 @@
 	    };
 
 	    var switchLoginId = function switchLoginId(loginid) {
-	        if (!loginid || loginid.length === 0) {
+	        if (!loginid || loginid.length === 0 || loginid === Client.get('loginid')) {
 	            return;
 	        }
 	        var token = Client.get_token(loginid);
@@ -36393,99 +36405,6 @@
 
 /***/ },
 /* 431 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var Client = __webpack_require__(301);
-	var GTM = __webpack_require__(427);
-	var getLanguage = __webpack_require__(422).getLanguage;
-	var default_redirect_url = __webpack_require__(426).default_redirect_url;
-	var url_for = __webpack_require__(426).url_for;
-	var isEmptyObject = __webpack_require__(424).isEmptyObject;
-	var Cookies = __webpack_require__(421);
-
-	var LoggedIn = function () {
-	    'use strict';
-
-	    var load = function load() {
-	        var tokens = storeTokens();
-	        var loginid = Cookies.get('loginid'),
-	            redirect_url = void 0;
-
-	        if (!loginid) {
-	            // redirected to another domain (e.g. github.io) so those cookie are not accessible here
-	            var loginids = Object.keys(tokens);
-	            var loginid_list = '';
-	            loginids.map(function (id) {
-	                loginid_list += '' + (loginid_list ? '+' : '') + id + ':' + (/^V/i.test(id) ? 'V' : 'R') + ':E'; // since there is not any data source to check, so assume all are enabled, disabled accounts will be handled on authorize
-	            });
-	            loginid = loginids[0];
-	            // set cookies
-	            Client.set_cookie('loginid', loginid);
-	            Client.set_cookie('loginid_list', loginid_list);
-	        }
-	        Client.set_cookie('token', tokens[loginid]);
-
-	        // set flags
-	        GTM.setLoginFlag();
-
-	        // redirect url
-	        redirect_url = sessionStorage.getItem('redirect_url');
-	        sessionStorage.removeItem('redirect_url');
-
-	        // redirect back
-	        var set_default = true;
-	        if (redirect_url) {
-	            var do_not_redirect = ['reset-password', 'lost-password', 'change-password', 'home'];
-	            var reg = new RegExp(do_not_redirect.join('|'), 'i');
-	            if (!reg.test(redirect_url) && url_for('') !== redirect_url) {
-	                set_default = false;
-	            }
-	        }
-	        if (set_default) {
-	            redirect_url = default_redirect_url();
-	            var lang_cookie = Cookies.get('language');
-	            var language = getLanguage();
-	            if (lang_cookie && lang_cookie !== language) {
-	                redirect_url = redirect_url.replace(new RegExp('/' + language + '/', 'i'), '/' + lang_cookie.toLowerCase() + '/');
-	            }
-	        }
-	        document.getElementById('loading_link').setAttribute('href', redirect_url);
-	        window.location.href = redirect_url;
-	    };
-
-	    var storeTokens = function storeTokens() {
-	        // Parse hash for loginids and tokens returned by OAuth
-	        var hash = (/acct1/i.test(window.location.hash) ? window.location.hash : window.location.search).substr(1).split('&');
-	        var tokens = {};
-	        for (var i = 0; i < hash.length; i += 2) {
-	            var loginid = getHashValue(hash[i], 'acct');
-	            var token = getHashValue(hash[i + 1], 'token');
-	            if (loginid && token) {
-	                tokens[loginid] = token;
-	            }
-	        }
-	        if (!isEmptyObject(tokens)) {
-	            Client.set('tokens', JSON.stringify(tokens));
-	        }
-	        return tokens;
-	    };
-
-	    var getHashValue = function getHashValue(source, key) {
-	        var match = new RegExp('^' + key);
-	        return source && source.length > 0 ? match.test(source.split('=')[0]) ? source.split('=')[1] : '' : '';
-	    };
-
-	    return {
-	        load: load
-	    };
-	}();
-
-	module.exports = LoggedIn;
-
-/***/ },
-/* 432 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -36688,6 +36607,99 @@
 	}();
 
 	module.exports = ChampionRouter;
+
+/***/ },
+/* 432 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Client = __webpack_require__(301);
+	var GTM = __webpack_require__(427);
+	var getLanguage = __webpack_require__(422).getLanguage;
+	var default_redirect_url = __webpack_require__(426).default_redirect_url;
+	var url_for = __webpack_require__(426).url_for;
+	var isEmptyObject = __webpack_require__(424).isEmptyObject;
+	var Cookies = __webpack_require__(421);
+
+	var LoggedIn = function () {
+	    'use strict';
+
+	    var load = function load() {
+	        var tokens = storeTokens();
+	        var loginid = Cookies.get('loginid'),
+	            redirect_url = void 0;
+
+	        if (!loginid) {
+	            // redirected to another domain (e.g. github.io) so those cookie are not accessible here
+	            var loginids = Object.keys(tokens);
+	            var loginid_list = '';
+	            loginids.map(function (id) {
+	                loginid_list += '' + (loginid_list ? '+' : '') + id + ':' + (/^V/i.test(id) ? 'V' : 'R') + ':E'; // since there is not any data source to check, so assume all are enabled, disabled accounts will be handled on authorize
+	            });
+	            loginid = loginids[0];
+	            // set cookies
+	            Client.set_cookie('loginid', loginid);
+	            Client.set_cookie('loginid_list', loginid_list);
+	        }
+	        Client.set_cookie('token', tokens[loginid]);
+
+	        // set flags
+	        GTM.setLoginFlag();
+
+	        // redirect url
+	        redirect_url = sessionStorage.getItem('redirect_url');
+	        sessionStorage.removeItem('redirect_url');
+
+	        // redirect back
+	        var set_default = true;
+	        if (redirect_url) {
+	            var do_not_redirect = ['reset-password', 'lost-password', 'change-password', 'home'];
+	            var reg = new RegExp(do_not_redirect.join('|'), 'i');
+	            if (!reg.test(redirect_url) && url_for('') !== redirect_url) {
+	                set_default = false;
+	            }
+	        }
+	        if (set_default) {
+	            redirect_url = default_redirect_url();
+	            var lang_cookie = Cookies.get('language');
+	            var language = getLanguage();
+	            if (lang_cookie && lang_cookie !== language) {
+	                redirect_url = redirect_url.replace(new RegExp('/' + language + '/', 'i'), '/' + lang_cookie.toLowerCase() + '/');
+	            }
+	        }
+	        document.getElementById('loading_link').setAttribute('href', redirect_url);
+	        window.location.href = redirect_url;
+	    };
+
+	    var storeTokens = function storeTokens() {
+	        // Parse hash for loginids and tokens returned by OAuth
+	        var hash = (/acct1/i.test(window.location.hash) ? window.location.hash : window.location.search).substr(1).split('&');
+	        var tokens = {};
+	        for (var i = 0; i < hash.length; i += 2) {
+	            var loginid = getHashValue(hash[i], 'acct');
+	            var token = getHashValue(hash[i + 1], 'token');
+	            if (loginid && token) {
+	                tokens[loginid] = token;
+	            }
+	        }
+	        if (!isEmptyObject(tokens)) {
+	            Client.set('tokens', JSON.stringify(tokens));
+	        }
+	        return tokens;
+	    };
+
+	    var getHashValue = function getHashValue(source, key) {
+	        var match = new RegExp('^' + key);
+	        return source && source.length > 0 ? match.test(source.split('=')[0]) ? source.split('=')[1] : '' : '';
+	    };
+
+	    return {
+	        load: load
+	    };
+	}();
+
+	module.exports = LoggedIn;
 
 /***/ },
 /* 433 */
@@ -36897,7 +36909,7 @@
 	'use strict';
 
 	var ChampionSocket = __webpack_require__(420);
-	var ChampionRouter = __webpack_require__(432);
+	var ChampionRouter = __webpack_require__(431);
 	var url_for = __webpack_require__(426).url_for;
 	var Validation = __webpack_require__(438);
 	var Client = __webpack_require__(301);
@@ -38305,10 +38317,7 @@
 	    };
 
 	    return {
-	        load: load,
-	        unload: function unload() {
-	            MetaTraderUI.unload();
-	        }
+	        load: load
 	    };
 	}();
 
@@ -38579,7 +38588,6 @@
 	    var validations = MetaTraderConfig.validations;
 
 	    var init = function init(submit_func) {
-	        $('#header .mt-hide').addClass(hidden_class);
 	        submit = submit_func;
 	        $container = $('#mt_account_management');
 	        $mt5_account = $container.find('#mt5_account');
@@ -38792,10 +38800,7 @@
 	        displayFormMessage: displayFormMessage,
 	        displayMainMessage: displayMainMessage,
 	        disableButton: disableButton,
-	        enableButton: enableButton,
-	        unload: function unload() {
-	            $('#header .mt-hide').removeClass(hidden_class);
-	        }
+	        enableButton: enableButton
 	    };
 	}();
 

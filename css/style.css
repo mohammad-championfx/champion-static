@@ -1465,6 +1465,20 @@ iframe {
   top: 20px;
   right: 10px;
 }
+#top_group.logged-in #header #main-logout li.account > a {
+  background: #013365;
+  height: 50px;
+  margin-top: 0;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+#top_group.logged-in #header #all-accounts {
+  padding-top: 0;
+}
 #top_group.logged-in #header #all-accounts, #top_group.logged-in #header #all-accounts li ul {
   background: #004385;
   border: none;
