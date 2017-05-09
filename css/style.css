@@ -1446,6 +1446,7 @@ iframe {
   width: auto;
   min-width: 160px;
   white-space: nowrap;
+  border: 0;
 }
 #top_group.logged-in #header .account-balance {
   font-size: 13px;
@@ -1470,9 +1471,6 @@ iframe {
 }
 #top_group.logged-in #header #all-accounts a {
   color: #fff;
-}
-#top_group.logged-in #header #all-accounts > li a {
-  margin: 1px 1px 0 0;
 }
 #top_group.logged-in #header #all-accounts ul {
   margin-left: 0;
@@ -1790,24 +1788,24 @@ button .barspinner.white {
     display: table;
     border-spacing: 5px;
   }
-  #mt_account_management .acc-actions a {
+  #mt_account_management .acc-actions > a {
     display: table-cell !important;
     width: 1%;
     text-align: center;
     padding: 10px !important;
   }
-  #mt_account_management .acc-actions a.invisible {
+  #mt_account_management .acc-actions > a.invisible {
     display: none !important;
   }
-  #mt_account_management .acc-actions a:hover, #mt_account_management .acc-actions a.selected {
+  #mt_account_management .acc-actions > a:hover, #mt_account_management .acc-actions > a.selected {
     border-right: 0 !important;
     border-bottom: 5px solid #004385;
   }
-  #mt_account_management .acc-actions a img {
+  #mt_account_management .acc-actions > a img {
     height: 36px;
     margin-bottom: 5px;
   }
-  #mt_account_management .acc-actions a span {
+  #mt_account_management .acc-actions > a span {
     display: block;
   }
 }
