@@ -36193,7 +36193,7 @@
 	        }
 
 	        var loginid_select = '';
-	        var is_mt_page = State.get('current_page') === 'metatrader';
+	        var is_mt_pages = State.get('is_mt_pages');
 	        Client.get('loginid_array').forEach(function (login) {
 	            if (!login.disabled) {
 	                var curr_id = login.id;
@@ -36206,7 +36206,7 @@
 	                    $('.main-account .account-type').html(type);
 	                    $('.main-account .account-id').html(curr_id);
 	                    loginid_select += '<div class="hidden-lg-up">\n                                        <span class="selected" href="javascript:;" value="' + curr_id + '">\n                                        <li><span class="nav-menu-icon pull-left ' + icon + '"></span>' + curr_id + '</li>\n                                        </span>\n                                       <div class="separator-line-thin-gray"></div></div>';
-	                } else if (is_mt_page && login.real && Client.is_virtual()) {
+	                } else if (is_mt_pages && login.real && Client.is_virtual()) {
 	                    switchLoginId(curr_id);
 	                    return;
 	                }
@@ -36216,7 +36216,7 @@
 	        });
 	        $('.login-id-list').html(loginid_select);
 	        $('#mobile-menu .mt-show').remove();
-	        setMetaTrader(is_mt_page);
+	        setMetaTrader(is_mt_pages);
 	        if (!Client.has_real()) {
 	            $('#all-accounts .upgrade').removeClass(hidden_class);
 	        }
@@ -36224,15 +36224,16 @@
 	            e.preventDefault();
 	            $(this).attr('disabled', 'disabled');
 	            switchLoginId($(this).attr('value'));
-	            if (State.get('current_page') === 'metatrader') {
+	            if (State.get('is_mt_pages')) {
+	                State.remove('is_mt_pages');
 	                ChampionRouter.forward(url_for('user/settings'));
 	            }
 	        });
 	    };
 
-	    var setMetaTrader = function setMetaTrader(is_mt_page) {
-	        $('#header .mt-hide')[is_mt_page ? 'addClass' : 'removeClass'](hidden_class);
-	        $('#header .mt-show')[is_mt_page ? 'removeClass' : 'addClass'](hidden_class);
+	    var setMetaTrader = function setMetaTrader(is_mt_pages) {
+	        $('#header, #footer').find('.mt-hide')[is_mt_pages ? 'addClass' : 'removeClass'](hidden_class);
+	        $('#header, #footer').find('.mt-show')[is_mt_pages ? 'removeClass' : 'addClass'](hidden_class);
 	    };
 
 	    var displayNotification = function displayNotification(message) {
@@ -38200,6 +38201,7 @@
 	var MetaTraderUI = __webpack_require__(452);
 	var Client = __webpack_require__(301);
 	var ChampionSocket = __webpack_require__(420);
+	var State = __webpack_require__(423).State;
 	var Validation = __webpack_require__(438);
 
 	var MetaTrader = function () {
@@ -38210,6 +38212,7 @@
 	    var fields = MetaTraderConfig.fields;
 
 	    var load = function load() {
+	        State.set('is_mt_pages', 1);
 	        ChampionSocket.wait('mt5_login_list').then(function (response) {
 	            responseLoginList(response);
 	        });
