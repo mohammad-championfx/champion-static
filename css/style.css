@@ -776,11 +776,6 @@ fieldset {
 #topbar .menu-container {
   line-height: 30px;
 }
-#topbar .upgrade-message a {
-  padding: 0 10px;
-  background: #fff;
-  color: #013365;
-}
 
 .languages {
   padding: 0;
