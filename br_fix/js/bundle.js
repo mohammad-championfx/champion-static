@@ -18545,27 +18545,26 @@
 	var ChampionEndpoint = __webpack_require__(435);
 	var MT5 = __webpack_require__(436);
 	var ChampionSignup = __webpack_require__(437);
-	var ChampionNewReal = __webpack_require__(439);
-	var ChampionNewVirtual = __webpack_require__(441);
-	var LostPassword = __webpack_require__(442);
-	var ResetPassword = __webpack_require__(443);
-	var Cashier = __webpack_require__(444);
-	var CashierPassword = __webpack_require__(445);
-	var CashierPaymentMethods = __webpack_require__(446);
-	var CashierTopUpVirtual = __webpack_require__(447);
-	var Authenticate = __webpack_require__(448);
-	var ChangePassword = __webpack_require__(449);
-	var MetaTrader = __webpack_require__(450);
-	var SelfExclusion = __webpack_require__(453);
-	var ChampionSettings = __webpack_require__(456);
-	var TNCApproval = __webpack_require__(457);
-	var CashierDepositWithdraw = __webpack_require__(458);
-	var Home = __webpack_require__(459);
-	var ChampionProfile = __webpack_require__(462);
-	var ChampionSecurity = __webpack_require__(466);
-	var LoginHistory = __webpack_require__(467);
-	var TradingTimes = __webpack_require__(468);
-	var Limits = __webpack_require__(469);
+	var LostPassword = __webpack_require__(439);
+	var ResetPassword = __webpack_require__(440);
+	var Cashier = __webpack_require__(442);
+	var CashierPassword = __webpack_require__(443);
+	var CashierPaymentMethods = __webpack_require__(444);
+	var CashierTopUpVirtual = __webpack_require__(445);
+	var Authenticate = __webpack_require__(446);
+	var ChangePassword = __webpack_require__(447);
+	var MetaTrader = __webpack_require__(448);
+	var NewAccount = __webpack_require__(451);
+	var SelfExclusion = __webpack_require__(452);
+	var ChampionSettings = __webpack_require__(455);
+	var TNCApproval = __webpack_require__(456);
+	var CashierDepositWithdraw = __webpack_require__(457);
+	var Home = __webpack_require__(458);
+	var ChampionProfile = __webpack_require__(461);
+	var ChampionSecurity = __webpack_require__(465);
+	var LoginHistory = __webpack_require__(466);
+	var TradingTimes = __webpack_require__(467);
+	var Limits = __webpack_require__(468);
 
 	var Champion = function () {
 	    'use strict';
@@ -18631,14 +18630,13 @@
 	            cfd: { module: MT5 },
 	            metals: { module: MT5 },
 	            profile: { module: ChampionProfile, is_authenticated: true },
-	            real: { module: ChampionNewReal, is_authenticated: true, only_virtual: true },
 	            settings: { module: ChampionSettings, is_authenticated: true },
 	            security: { module: ChampionSecurity, is_authenticated: true },
-	            virtual: { module: ChampionNewVirtual, not_authenticated: true },
 	            'cashier-password': { module: CashierPassword, is_authenticated: true, only_real: true },
 	            'change-password': { module: ChangePassword, is_authenticated: true },
 	            'login-history': { module: LoginHistory, is_authenticated: true },
 	            'lost-password': { module: LostPassword, not_authenticated: true },
+	            'new-account': { module: NewAccount },
 	            'payment-methods': { module: CashierPaymentMethods },
 	            'reset-password': { module: ResetPassword, not_authenticated: true },
 	            'self-exclusion': { module: SelfExclusion, is_authenticated: true, only_real: true },
@@ -18865,7 +18863,7 @@
 	        cookie.write(value, cookie_expire, true);
 	    };
 
-	    var process_new_account = function process_new_account(client_email, client_loginid, token, virtual_client) {
+	    var process_new_account = function process_new_account(client_email, client_loginid, token, is_virtual) {
 	        if (!client_email || !client_loginid || !token) {
 	            return;
 	        }
@@ -18875,11 +18873,13 @@
 	        set_cookie('email', client_email);
 	        set_cookie('token', token);
 	        set_cookie('loginid', client_loginid);
-	        set_cookie('loginid_list', virtual_client ? client_loginid + ':V:E' : client_loginid + ':R:E+' + Cookies.get('loginid_list'));
+	        set_cookie('loginid_list', is_virtual ? client_loginid + ':V:E' : client_loginid + ':R:E+' + Cookies.get('loginid_list'));
 	        // set local storage
 	        localStorage.setItem('GTM_new_account', '1');
-	        set('loginid', client_loginid);
-	        window.location.href = url.default_redirect_url();
+	        if (!is_virtual) {
+	            set('loginid', client_loginid);
+	            window.location.href = url.default_redirect_url();
+	        }
 	    };
 
 	    var request_logout = function request_logout() {
@@ -36950,7 +36950,7 @@
 	                type: 'account_opening'
 	            }).then(function (response) {
 	                if (response.verify_email) {
-	                    ChampionRouter.forward(url_for('new-account/virtual'));
+	                    ChampionRouter.forward(url_for('new-account'));
 	                } else if (response.error) {
 	                    $(form_selector + ':visible #signup_error').text(response.error.message).removeClass(hidden_class);
 	                }
@@ -37021,7 +37021,7 @@
 
 	                    var event = events_map[field.type];
 	                    if (event) {
-	                        field.$.unbind(event).on(event, function () {
+	                        field.$.off(event + '.validation').on(event + '.validation', function () {
 	                            checkField(field);
 	                            if (field.re_check_field) {
 	                                checkField(forms[form_selector].fields.find(function (fld) {
@@ -37238,154 +37238,51 @@
 
 	'use strict';
 
-	var moment = __webpack_require__(302);
-	var ChampionSocket = __webpack_require__(420);
 	var Client = __webpack_require__(301);
-	var Utility = __webpack_require__(424);
-	var default_redirect_url = __webpack_require__(426).default_redirect_url;
 	var Validation = __webpack_require__(438);
-	var DatePicker = __webpack_require__(440).DatePicker;
+	var ChampionSocket = __webpack_require__(420);
+	var url_for = __webpack_require__(426).url_for;
 
-	var ChampionNewRealAccount = function () {
+	var LostPassword = function () {
 	    'use strict';
 
-	    var form_selector = '#frm_new_account_real';
-	    var hidden_class = 'invisible';
-
-	    var client_residence = void 0;
-
-	    var container = void 0,
-	        btn_submit = void 0,
-	        datePickerInst = void 0;
+	    var form_selector = '#frm_lost_password';
+	    var btn_submit = void 0;
 
 	    var fields = {
-	        ddl_title: '#ddl_title',
-	        txt_fname: '#txt_fname',
-	        txt_lname: '#txt_lname',
-	        txt_birth_date: '#txt_birth_date',
-	        lbl_residence: '#lbl_residence',
-	        txt_address1: '#txt_address1',
-	        txt_address2: '#txt_address2',
-	        txt_city: '#txt_city',
-	        ddl_state: '#ddl_state',
-	        txt_state: '#txt_state',
-	        txt_postcode: '#txt_postcode',
-	        txt_phone: '#txt_phone',
-	        ddl_secret_question: '#ddl_secret_question',
-	        txt_secret_answer: '#txt_secret_answer',
-	        chk_not_pep: '#chk_not_pep',
-	        chk_tnc: '#chk_tnc',
+	        txt_email: '#txt_email',
 	        btn_submit: '#btn_submit'
 	    };
 
 	    var load = function load() {
-	        if (Client.has_real()) {
-	            window.location.href = default_redirect_url();
-	            return;
-	        }
+	        if (Client.redirect_if_login()) return;
+	        btn_submit = $(form_selector).find(fields.btn_submit);
 
-	        container = $('#champion-container');
-	        client_residence = Client.get('residence');
-	        displayResidence();
-	        populateState();
-	        attachDatePicker();
+	        btn_submit.on('click', submit);
 
-	        btn_submit = container.find(fields.btn_submit);
-	        btn_submit.on('click dblclick', submit);
+	        Validation.init(form_selector, [{ selector: fields.txt_email, validations: ['req', 'email'] }]);
 	    };
 
 	    var unload = function unload() {
 	        if (btn_submit) {
 	            btn_submit.off('click', submit);
 	        }
-	        if (datePickerInst) {
-	            datePickerInst.hide();
-	        }
-	    };
-
-	    var initValidation = function initValidation() {
-	        Validation.init(form_selector, [{ selector: fields.txt_fname, validations: ['req', 'letter_symbol', ['min', { min: 2 }]] }, { selector: fields.txt_lname, validations: ['req', 'letter_symbol', ['min', { min: 2 }]] }, { selector: fields.txt_birth_date, validations: ['req'] }, { selector: fields.txt_address1, validations: ['req', 'address', ['length', { min: 1, max: 70 }]] }, { selector: fields.txt_address2, validations: ['address', ['length', { min: 0, max: 70 }]] }, { selector: fields.txt_city, validations: ['req', 'letter_symbol', ['length', { min: 1, max: 35 }]] }, { selector: fields.txt_state, validations: ['letter_symbol'] }, { selector: fields.txt_postcode, validations: ['postcode', ['length', { min: 0, max: 20 }]] }, { selector: fields.txt_phone, validations: ['req', 'phone', ['length', { min: 6, max: 35, exclude: /^\+/ }]] }, { selector: fields.ddl_secret_question, validations: ['req'] }, { selector: fields.txt_secret_answer, validations: ['req', 'general', ['length', { min: 4, max: 50 }]] }, { selector: fields.chk_tnc, validations: ['req'] }, { selector: fields.chk_not_pep, validations: ['req'] }]);
-	    };
-
-	    var displayResidence = function displayResidence() {
-	        ChampionSocket.send({ residence_list: 1 }).then(function (response) {
-	            container.find('#residence_loading').remove();
-	            var $lbl_residence = container.find(fields.lbl_residence);
-	            var country_obj = response.residence_list.find(function (r) {
-	                return r.value === client_residence;
-	            });
-	            if (country_obj) {
-	                $lbl_residence.text(country_obj.text);
-	                if (country_obj.phone_idd) {
-	                    $(fields.txt_phone).val('+' + country_obj.phone_idd);
-	                }
-	            }
-	            $lbl_residence.parent().removeClass(hidden_class);
-	        });
-	    };
-
-	    var populateState = function populateState() {
-	        ChampionSocket.send({ states_list: client_residence }).then(function (response) {
-	            var $ddl_state = container.find(fields.ddl_state);
-	            var states = response.states_list;
-	            container.find('#state_loading').remove();
-	            if (states && states.length) {
-	                Utility.dropDownFromObject($ddl_state, states);
-	                $ddl_state.removeClass(hidden_class);
-	            } else {
-	                $ddl_state.replaceWith($('<input/>', { type: 'text', id: fields.txt_state.replace('#', ''), class: 'text', maxlength: '35' }));
-	            }
-	            initValidation();
-	        });
-	    };
-
-	    var attachDatePicker = function attachDatePicker() {
-	        datePickerInst = new DatePicker(fields.txt_birth_date);
-	        datePickerInst.show({
-	            minDate: -100 * 365,
-	            maxDate: -18 * 365 - 5,
-	            yearRange: '-100:-18'
-	        });
-	        $(fields.txt_birth_date).attr('data-value', Utility.toISOFormat(moment())).change(function () {
-	            return Utility.dateValueChanged(this, 'date');
-	        }).val('');
 	    };
 
 	    var submit = function submit(e) {
 	        e.preventDefault();
-	        btn_submit.attr('disabled', 'disabled');
 	        if (Validation.validate(form_selector)) {
 	            var data = {
-	                new_account_real: 1,
-	                salutation: $(fields.ddl_title).val(),
-	                first_name: $(fields.txt_fname).val(),
-	                last_name: $(fields.txt_lname).val(),
-	                date_of_birth: $(fields.txt_birth_date).val(),
-	                residence: client_residence,
-	                address_line_1: $(fields.txt_address1).val(),
-	                address_line_2: $(fields.txt_address2).val(),
-	                address_city: $(fields.txt_city).val(),
-	                address_state: $(fields.ddl_state).val() || $(fields.txt_state).val(),
-	                address_postcode: $(fields.txt_postcode).val(),
-	                phone: $(fields.txt_phone).val(),
-	                secret_question: $(fields.ddl_secret_question).val(),
-	                secret_answer: $(fields.txt_secret_answer).val()
+	                verify_email: $(fields.txt_email).val(),
+	                type: 'reset_password'
 	            };
-	            if (Client.get('affiliate_token')) {
-	                data.affiliate_token = Client.get('affiliate_token');
-	            }
 	            ChampionSocket.send(data).then(function (response) {
 	                if (response.error) {
-	                    $('#msg_form').removeClass(hidden_class).text(response.error.message);
-	                    btn_submit.removeAttr('disabled');
+	                    $('#msg_form').removeClass('invisible').text(response.error.message);
 	                } else {
-	                    var acc_info = response.new_account_real;
-	                    Client.process_new_account(Client.get('email'), acc_info.client_id, acc_info.oauth_token);
-	                    window.location.href = default_redirect_url();
+	                    window.location.href = url_for('reset-password');
 	                }
 	            });
-	        } else {
-	            btn_submit.removeAttr('disabled');
 	        }
 	    };
 
@@ -37395,10 +37292,122 @@
 	    };
 	}();
 
-	module.exports = ChampionNewRealAccount;
+	module.exports = LostPassword;
 
 /***/ },
 /* 440 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Client = __webpack_require__(301);
+	var Validation = __webpack_require__(438);
+	var ChampionSocket = __webpack_require__(420);
+	var Login = __webpack_require__(428);
+	var DatePicker = __webpack_require__(441).DatePicker;
+	var Utility = __webpack_require__(424);
+	var moment = __webpack_require__(302);
+
+	var ResetPassword = function () {
+	    'use strict';
+
+	    var form_selector = '#frm_reset_password';
+	    var hidden_class = 'invisible';
+
+	    var container = void 0,
+	        btn_submit = void 0,
+	        real_acc = void 0;
+
+	    var fields = {
+	        txt_verification_code: '#txt_verification_code',
+	        txt_password: '#txt_password',
+	        txt_re_password: '#txt_re_password',
+	        chk_has_real: '#chk_has_real',
+	        txt_birth_date: '#txt_birth_date',
+	        btn_submit: '#btn_submit'
+	    };
+
+	    var load = function load() {
+	        if (Client.redirect_if_login()) return;
+	        container = $(form_selector);
+	        btn_submit = container.find(fields.btn_submit);
+	        real_acc = container.find(fields.chk_has_real);
+
+	        real_acc.on('click', haveRealAccountHandler);
+	        btn_submit.on('click', submit);
+	        attachDatePicker();
+
+	        Validation.init(form_selector, [{ selector: fields.txt_verification_code, validations: ['req', 'email_token'] }, { selector: fields.txt_password, validations: ['req', 'password'] }, { selector: fields.txt_re_password, validations: ['req', ['compare', { to: fields.txt_password }]] }, { selector: fields.txt_birth_date, validations: ['req'] }]);
+	    };
+
+	    var haveRealAccountHandler = function haveRealAccountHandler() {
+	        container.find('.dob_row').toggleClass(hidden_class);
+	    };
+
+	    var submit = function submit(e) {
+	        e.preventDefault();
+	        if (Validation.validate(form_selector)) {
+	            var data = {
+	                reset_password: 1,
+	                verification_code: $(fields.txt_verification_code).val(),
+	                new_password: $(fields.txt_password).val()
+	            };
+	            if (real_acc.is(':checked')) {
+	                data.date_of_birth = $(fields.txt_birth_date).val();
+	            }
+	            ChampionSocket.send(data).then(function (response) {
+	                btn_submit.prop('disabled', true);
+	                $(form_selector).addClass(hidden_class);
+	                if (response.error) {
+	                    $('p.notice-msg').addClass(hidden_class);
+	                    $('#reset-error').removeClass(hidden_class);
+
+	                    var resetErrorTemplate = '[_1]' + ' Please click the link below to restart the password recovery process. ' + 'If you require further assistance, please contact our Customer Support.';
+
+	                    // special handling as backend returns inconsistent format
+	                    var errMsg = resetErrorTemplate.replace('[_1]', response.error.code === 'InputValidationFailed' ? 'Token has expired.' : response.error.message);
+
+	                    $('#reset-error-msg').text(errMsg);
+	                } else {
+	                    $('p.notice-msg').text('Your password has been successfully reset. ' + 'Please log into your account using your new password.');
+	                    window.setTimeout(function () {
+	                        Login.redirect_to_login();
+	                    }, 5000);
+	                }
+	            });
+	        }
+	    };
+
+	    var attachDatePicker = function attachDatePicker() {
+	        var datePickerInst = new DatePicker(fields.txt_birth_date);
+	        datePickerInst.hide();
+	        datePickerInst.show({
+	            minDate: -100 * 365,
+	            maxDate: -18 * 365 - 5,
+	            yearRange: '-100:-18'
+	        });
+	        $(fields.txt_birth_date).attr('data-value', Utility.toISOFormat(moment())).change(function () {
+	            return Utility.dateValueChanged(this, 'date');
+	        });
+	    };
+
+	    var unload = function unload() {
+	        if (btn_submit) {
+	            real_acc.off('click', haveRealAccountHandler);
+	            btn_submit.off('click', submit);
+	        }
+	    };
+
+	    return {
+	        load: load,
+	        unload: unload
+	    };
+	}();
+
+	module.exports = ResetPassword;
+
+/***/ },
+/* 441 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37562,270 +37571,7 @@
 	};
 
 /***/ },
-/* 441 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var ChampionSocket = __webpack_require__(420);
-	var Client = __webpack_require__(301);
-	var Utility = __webpack_require__(424);
-	var default_redirect_url = __webpack_require__(426).default_redirect_url;
-	var Validation = __webpack_require__(438);
-
-	var ChampionNewVirtualAccount = function () {
-	    'use strict';
-
-	    var form_selector = '#frm_new_account_virtual';
-	    var hidden_class = 'invisible';
-
-	    var container = void 0,
-	        btn_submit = void 0;
-
-	    var fields = {
-	        txt_verification_code: '#txt_verification_code',
-	        txt_password: '#txt_password',
-	        txt_re_password: '#txt_re_password',
-	        ddl_residence: '#ddl_residence',
-	        btn_submit: '#btn_submit'
-	    };
-
-	    var load = function load() {
-	        if (Client.redirect_if_login()) return;
-	        container = $('#champion-container');
-	        btn_submit = container.find(fields.btn_submit);
-	        btn_submit.on('click dblclick', submit);
-
-	        Validation.init(form_selector, [{ selector: fields.txt_verification_code, validations: ['req', 'email_token'] }, { selector: fields.txt_password, validations: ['req', 'password'] }, { selector: fields.txt_re_password, validations: ['req', ['compare', { to: fields.txt_password }]] }, { selector: fields.ddl_residence, validations: ['req'] }]);
-
-	        populateResidence();
-	    };
-
-	    var populateResidence = function populateResidence() {
-	        ChampionSocket.send({ residence_list: 1 }).then(function (response) {
-	            var $ddl_residence = container.find(fields.ddl_residence);
-	            Utility.dropDownFromObject($ddl_residence, response.residence_list);
-	            container.find('#residence_loading').remove();
-	            $ddl_residence.removeClass(hidden_class);
-	        });
-	    };
-
-	    var unload = function unload() {
-	        if (btn_submit) {
-	            btn_submit.off('click', submit);
-	        }
-	    };
-
-	    var submit = function submit(e) {
-	        e.preventDefault();
-	        if (Validation.validate(form_selector)) {
-	            btn_submit.attr('disabled', 'disabled');
-	            var data = {
-	                new_account_virtual: 1,
-	                verification_code: $(fields.txt_verification_code).val(),
-	                client_password: $(fields.txt_password).val(),
-	                residence: $(fields.ddl_residence).val()
-	            };
-	            if (Client.get('affiliate_token')) {
-	                data.affiliate_token = Client.get('affiliate_token');
-	            }
-	            ChampionSocket.send(data).then(function (response) {
-	                if (response.error) {
-	                    $('#msg_form').removeClass(hidden_class).text(response.error.message);
-	                    btn_submit.removeAttr('disabled');
-	                } else {
-	                    var acc_info = response.new_account_virtual;
-	                    Client.process_new_account(acc_info.email, acc_info.client_id, acc_info.oauth_token, true);
-	                    window.location.href = default_redirect_url();
-	                }
-	            });
-	        }
-	    };
-
-	    return {
-	        load: load,
-	        unload: unload
-	    };
-	}();
-
-	module.exports = ChampionNewVirtualAccount;
-
-/***/ },
 /* 442 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var Client = __webpack_require__(301);
-	var Validation = __webpack_require__(438);
-	var ChampionSocket = __webpack_require__(420);
-	var url_for = __webpack_require__(426).url_for;
-
-	var LostPassword = function () {
-	    'use strict';
-
-	    var form_selector = '#frm_lost_password';
-	    var btn_submit = void 0;
-
-	    var fields = {
-	        txt_email: '#txt_email',
-	        btn_submit: '#btn_submit'
-	    };
-
-	    var load = function load() {
-	        if (Client.redirect_if_login()) return;
-	        btn_submit = $(form_selector).find(fields.btn_submit);
-
-	        btn_submit.on('click', submit);
-
-	        Validation.init(form_selector, [{ selector: fields.txt_email, validations: ['req', 'email'] }]);
-	    };
-
-	    var unload = function unload() {
-	        if (btn_submit) {
-	            btn_submit.off('click', submit);
-	        }
-	    };
-
-	    var submit = function submit(e) {
-	        e.preventDefault();
-	        if (Validation.validate(form_selector)) {
-	            var data = {
-	                verify_email: $(fields.txt_email).val(),
-	                type: 'reset_password'
-	            };
-	            ChampionSocket.send(data).then(function (response) {
-	                if (response.error) {
-	                    $('#msg_form').removeClass('invisible').text(response.error.message);
-	                } else {
-	                    window.location.href = url_for('reset-password');
-	                }
-	            });
-	        }
-	    };
-
-	    return {
-	        load: load,
-	        unload: unload
-	    };
-	}();
-
-	module.exports = LostPassword;
-
-/***/ },
-/* 443 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var Client = __webpack_require__(301);
-	var Validation = __webpack_require__(438);
-	var ChampionSocket = __webpack_require__(420);
-	var Login = __webpack_require__(428);
-	var DatePicker = __webpack_require__(440).DatePicker;
-	var Utility = __webpack_require__(424);
-	var moment = __webpack_require__(302);
-
-	var ResetPassword = function () {
-	    'use strict';
-
-	    var form_selector = '#frm_reset_password';
-	    var hidden_class = 'invisible';
-
-	    var container = void 0,
-	        btn_submit = void 0,
-	        real_acc = void 0;
-
-	    var fields = {
-	        txt_verification_code: '#txt_verification_code',
-	        txt_password: '#txt_password',
-	        txt_re_password: '#txt_re_password',
-	        chk_has_real: '#chk_has_real',
-	        txt_birth_date: '#txt_birth_date',
-	        btn_submit: '#btn_submit'
-	    };
-
-	    var load = function load() {
-	        if (Client.redirect_if_login()) return;
-	        container = $(form_selector);
-	        btn_submit = container.find(fields.btn_submit);
-	        real_acc = container.find(fields.chk_has_real);
-
-	        real_acc.on('click', haveRealAccountHandler);
-	        btn_submit.on('click', submit);
-	        attachDatePicker();
-
-	        Validation.init(form_selector, [{ selector: fields.txt_verification_code, validations: ['req', 'email_token'] }, { selector: fields.txt_password, validations: ['req', 'password'] }, { selector: fields.txt_re_password, validations: ['req', ['compare', { to: fields.txt_password }]] }, { selector: fields.txt_birth_date, validations: ['req'] }]);
-	    };
-
-	    var haveRealAccountHandler = function haveRealAccountHandler() {
-	        container.find('.dob_row').toggleClass(hidden_class);
-	    };
-
-	    var submit = function submit(e) {
-	        e.preventDefault();
-	        if (Validation.validate(form_selector)) {
-	            var data = {
-	                reset_password: 1,
-	                verification_code: $(fields.txt_verification_code).val(),
-	                new_password: $(fields.txt_password).val()
-	            };
-	            if (real_acc.is(':checked')) {
-	                data.date_of_birth = $(fields.txt_birth_date).val();
-	            }
-	            ChampionSocket.send(data).then(function (response) {
-	                btn_submit.prop('disabled', true);
-	                $(form_selector).addClass(hidden_class);
-	                if (response.error) {
-	                    $('p.notice-msg').addClass(hidden_class);
-	                    $('#reset-error').removeClass(hidden_class);
-
-	                    var resetErrorTemplate = '[_1]' + ' Please click the link below to restart the password recovery process. ' + 'If you require further assistance, please contact our Customer Support.';
-
-	                    // special handling as backend returns inconsistent format
-	                    var errMsg = resetErrorTemplate.replace('[_1]', response.error.code === 'InputValidationFailed' ? 'Token has expired.' : response.error.message);
-
-	                    $('#reset-error-msg').text(errMsg);
-	                } else {
-	                    $('p.notice-msg').text('Your password has been successfully reset. ' + 'Please log into your account using your new password.');
-	                    window.setTimeout(function () {
-	                        Login.redirect_to_login();
-	                    }, 5000);
-	                }
-	            });
-	        }
-	    };
-
-	    var attachDatePicker = function attachDatePicker() {
-	        var datePickerInst = new DatePicker(fields.txt_birth_date);
-	        datePickerInst.hide();
-	        datePickerInst.show({
-	            minDate: -100 * 365,
-	            maxDate: -18 * 365 - 5,
-	            yearRange: '-100:-18'
-	        });
-	        $(fields.txt_birth_date).attr('data-value', Utility.toISOFormat(moment())).change(function () {
-	            return Utility.dateValueChanged(this, 'date');
-	        });
-	    };
-
-	    var unload = function unload() {
-	        if (btn_submit) {
-	            real_acc.off('click', haveRealAccountHandler);
-	            btn_submit.off('click', submit);
-	        }
-	    };
-
-	    return {
-	        load: load,
-	        unload: unload
-	    };
-	}();
-
-	module.exports = ResetPassword;
-
-/***/ },
-/* 444 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37873,7 +37619,7 @@
 	module.exports = Cashier;
 
 /***/ },
-/* 445 */
+/* 443 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37973,7 +37719,7 @@
 	module.exports = CashierPassword;
 
 /***/ },
-/* 446 */
+/* 444 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38010,7 +37756,7 @@
 	module.exports = CashierPaymentMethods;
 
 /***/ },
-/* 447 */
+/* 445 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38057,7 +37803,7 @@
 	module.exports = CashierTopUpVirtual;
 
 /***/ },
-/* 448 */
+/* 446 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38094,7 +37840,7 @@
 	module.exports = Authenticate;
 
 /***/ },
-/* 449 */
+/* 447 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38162,13 +37908,13 @@
 	module.exports = ChangePassword;
 
 /***/ },
-/* 450 */
+/* 448 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var MetaTraderConfig = __webpack_require__(451);
-	var MetaTraderUI = __webpack_require__(452);
+	var MetaTraderConfig = __webpack_require__(449);
+	var MetaTraderUI = __webpack_require__(450);
 	var Client = __webpack_require__(301);
 	var ChampionSocket = __webpack_require__(420);
 	var Validation = __webpack_require__(438);
@@ -38278,7 +38024,7 @@
 	module.exports = MetaTrader;
 
 /***/ },
-/* 451 */
+/* 449 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38508,12 +38254,12 @@
 	module.exports = MetaTraderConfig;
 
 /***/ },
-/* 452 */
+/* 450 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var MetaTraderConfig = __webpack_require__(451);
+	var MetaTraderConfig = __webpack_require__(449);
 	var formatMoney = __webpack_require__(430).formatMoney;
 	var showLoadingImage = __webpack_require__(424).showLoadingImage;
 	var Validation = __webpack_require__(438);
@@ -38705,18 +38451,266 @@
 	module.exports = MetaTraderUI;
 
 /***/ },
-/* 453 */
+/* 451 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var moment = __webpack_require__(302);
+	var ChampionSocket = __webpack_require__(420);
+	var ChampionRouter = __webpack_require__(432);
+	var Client = __webpack_require__(301);
+	var State = __webpack_require__(423).State;
+	var Utility = __webpack_require__(424);
+	var default_redirect_url = __webpack_require__(426).default_redirect_url;
+	var Validation = __webpack_require__(438);
+	var DatePicker = __webpack_require__(441).DatePicker;
+	var Cookies = __webpack_require__(421);
+
+	var NewAccount = function () {
+	    'use strict';
+
+	    var form_selector = '#frm_new_account_real';
+	    var hidden_class = 'invisible';
+
+	    var client_residence = void 0;
+
+	    var $container = void 0,
+	        $btn_submit = void 0,
+	        datePickerInst = void 0;
+
+	    var fields = {
+	        txt_verification_code: '#txt_verification_code',
+	        txt_password: '#txt_password',
+	        txt_re_password: '#txt_re_password',
+	        ddl_residence: '#ddl_residence',
+	        ddl_title: '#ddl_title',
+	        txt_fname: '#txt_fname',
+	        txt_lname: '#txt_lname',
+	        txt_birth_date: '#txt_birth_date',
+	        lbl_residence: '#lbl_residence',
+	        txt_address1: '#txt_address1',
+	        txt_address2: '#txt_address2',
+	        txt_city: '#txt_city',
+	        ddl_state: '#ddl_state',
+	        txt_state: '#txt_state',
+	        txt_postcode: '#txt_postcode',
+	        txt_phone: '#txt_phone',
+	        ddl_secret_question: '#ddl_secret_question',
+	        txt_secret_answer: '#txt_secret_answer',
+	        chk_not_pep: '#chk_not_pep',
+	        chk_tnc: '#chk_tnc',
+	        btn_submit: '#btn_submit'
+	    };
+
+	    var load = function load() {
+	        ChampionSocket.wait('authorize').then(function () {
+	            if (Client.has_real()) {
+	                ChampionRouter.forward(default_redirect_url());
+	                return;
+	            }
+
+	            $container = $('#champion-container');
+	            client_residence = Client.get('residence');
+
+	            toggleForm();
+	            displayResidence();
+	            attachDatePicker();
+
+	            $btn_submit = $container.find(fields.btn_submit);
+	            $btn_submit.on('click dblclick', submit);
+	        });
+	    };
+
+	    var isUpgrade = function isUpgrade() {
+	        return Client.is_logged_in();
+	    };
+
+	    var toggleForm = function toggleForm() {
+	        var is_upgrade = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : isUpgrade();
+
+	        $container.find('.hide-upgrade')[is_upgrade ? 'addClass' : 'removeClass'](hidden_class);
+	        $container.find('.show-upgrade')[is_upgrade ? 'removeClass' : 'addClass'](hidden_class);
+	    };
+
+	    var unload = function unload() {
+	        if ($btn_submit) {
+	            $btn_submit.off('click', submit);
+	        }
+	        if (datePickerInst) {
+	            datePickerInst.hide();
+	        }
+	    };
+
+	    var initValidation = function initValidation() {
+	        var validations = [{ selector: fields.txt_fname, validations: ['req', 'letter_symbol', ['min', { min: 2 }]] }, { selector: fields.txt_lname, validations: ['req', 'letter_symbol', ['min', { min: 2 }]] }, { selector: fields.txt_birth_date, validations: ['req'] }, { selector: fields.txt_address1, validations: ['req', 'address', ['length', { min: 1, max: 70 }]] }, { selector: fields.txt_address2, validations: ['address', ['length', { min: 0, max: 70 }]] }, { selector: fields.txt_city, validations: ['req', 'letter_symbol', ['length', { min: 1, max: 35 }]] }, { selector: fields.txt_state, validations: ['letter_symbol'] }, { selector: fields.txt_postcode, validations: ['postcode', ['length', { min: 0, max: 20 }]] }, { selector: fields.txt_phone, validations: ['req', 'phone', ['length', { min: 6, max: 35, exclude: /^\+/ }]] }, { selector: fields.ddl_secret_question, validations: ['req'] }, { selector: fields.txt_secret_answer, validations: ['req', 'general', ['length', { min: 4, max: 50 }]] }, { selector: fields.chk_tnc, validations: ['req'] }, { selector: fields.chk_not_pep, validations: ['req'] }];
+	        if (!isUpgrade()) {
+	            validations.push({ selector: fields.txt_verification_code, validations: ['req', 'email_token'] }, { selector: fields.txt_password, validations: ['req', 'password'] }, { selector: fields.txt_re_password, validations: ['req', ['compare', { to: fields.txt_password }]] }, { selector: fields.ddl_residence, validations: ['req'] });
+	        }
+
+	        Validation.init(form_selector, validations);
+	    };
+
+	    var displayResidence = function displayResidence() {
+	        ChampionSocket.send({ residence_list: 1 }).then(function (response) {
+	            $container.find('#ddl_residence_loading, #lbl_residence_loading').remove();
+	            if (isUpgrade()) {
+	                $container.find(fields.lbl_residence).text(setPhoneIdd(client_residence).text).parent().removeClass(hidden_class);
+	                populateState();
+	            } else {
+	                var $ddl_residence = $container.find(fields.ddl_residence);
+	                Utility.dropDownFromObject($ddl_residence, response.residence_list);
+	                $ddl_residence.off('change').on('change', residenceOnChange);
+	                residenceOnChange();
+	                $ddl_residence.removeClass(hidden_class);
+	            }
+	        });
+	    };
+
+	    var residenceOnChange = function residenceOnChange() {
+	        var residence = $container.find(fields.ddl_residence).val();
+	        setPhoneIdd(residence);
+	        populateState(residence);
+	    };
+
+	    var setPhoneIdd = function setPhoneIdd(country) {
+	        var country_obj = State.get(['response', 'residence_list']).residence_list.find(function (r) {
+	            return r.value === country;
+	        });
+	        $(fields.txt_phone).val(country_obj && country_obj.phone_idd ? '+' + country_obj.phone_idd : '');
+	        return country_obj;
+	    };
+
+	    var populateState = function populateState() {
+	        var country = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : client_residence;
+
+	        var $elm_state = $container.find(fields.ddl_state);
+	        if (!$elm_state.length) $elm_state = $container.find(fields.txt_state);
+	        $elm_state.addClass(hidden_class);
+
+	        var $state_loading = $container.find('#state_loading').removeClass(hidden_class);
+
+	        ChampionSocket.send({ states_list: country }).then(function (response) {
+	            var states = response.states_list;
+	            $state_loading.addClass(hidden_class);
+	            if (states && states.length) {
+	                if ($elm_state.nodeName !== 'SELECT') {
+	                    $elm_state.replaceWith($('<select/>', { id: fields.ddl_state.replace('#', '') }));
+	                }
+	                $elm_state = $container.find(fields.ddl_state);
+	                Utility.dropDownFromObject($elm_state.empty(), states);
+	            } else if ($elm_state.nodeName !== 'INPUT') {
+	                $elm_state.replaceWith($('<input/>', { type: 'text', id: fields.txt_state.replace('#', ''), class: 'text', maxlength: '35' }));
+	                $elm_state = $container.find(fields.txt_state);
+	            }
+	            $elm_state.removeClass(hidden_class);
+	            initValidation();
+	        });
+	    };
+
+	    var attachDatePicker = function attachDatePicker() {
+	        datePickerInst = new DatePicker(fields.txt_birth_date);
+	        datePickerInst.show({
+	            minDate: -100 * 365,
+	            maxDate: -18 * 365 - 5,
+	            yearRange: '-100:-18'
+	        });
+	        $(fields.txt_birth_date).attr('data-value', Utility.toISOFormat(moment())).change(function () {
+	            return Utility.dateValueChanged(this, 'date');
+	        }).val('');
+	    };
+
+	    var submit = function submit(e) {
+	        e.preventDefault();
+	        $btn_submit.attr('disabled', 'disabled');
+	        if (Validation.validate(form_selector)) {
+	            if (isUpgrade()) {
+	                createRealAccount();
+	            } else {
+	                client_residence = $(fields.ddl_residence).val();
+	                var req_virtual = {
+	                    new_account_virtual: 1,
+	                    verification_code: $(fields.txt_verification_code).val(),
+	                    client_password: $(fields.txt_password).val(),
+	                    residence: client_residence
+	                };
+	                if (Client.get('affiliate_token')) {
+	                    req_virtual.affiliate_token = Client.get('affiliate_token');
+	                }
+	                ChampionSocket.send(req_virtual).then(function (response) {
+	                    if (response.error) {
+	                        $('#msg_form').removeClass(hidden_class).text(response.error.message);
+	                        $btn_submit.removeAttr('disabled');
+	                    } else {
+	                        var acc_info = response.new_account_virtual;
+	                        Client.process_new_account(acc_info.email, acc_info.client_id, acc_info.oauth_token, true);
+	                        createRealAccount();
+	                    }
+	                });
+	            }
+	        } else {
+	            $btn_submit.removeAttr('disabled');
+	        }
+	    };
+
+	    var createRealAccount = function createRealAccount() {
+	        var req_real = {
+	            new_account_real: 1,
+	            salutation: $(fields.ddl_title).val(),
+	            first_name: $(fields.txt_fname).val(),
+	            last_name: $(fields.txt_lname).val(),
+	            date_of_birth: $(fields.txt_birth_date).val(),
+	            residence: client_residence,
+	            address_line_1: $(fields.txt_address1).val(),
+	            address_line_2: $(fields.txt_address2).val(),
+	            address_city: $(fields.txt_city).val(),
+	            address_state: $(fields.ddl_state).val() || $(fields.txt_state).val(),
+	            address_postcode: $(fields.txt_postcode).val(),
+	            phone: $(fields.txt_phone).val(),
+	            secret_question: $(fields.ddl_secret_question).val(),
+	            secret_answer: $(fields.txt_secret_answer).val()
+	        };
+	        if (Client.get('affiliate_token')) {
+	            req_real.affiliate_token = Client.get('affiliate_token');
+	        }
+	        ChampionSocket.send(req_real).then(function (response) {
+	            if (response.error) {
+	                $('#msg_form').removeClass(hidden_class).text(response.error.message);
+	                $btn_submit.removeAttr('disabled');
+	                if (!isUpgrade()) {
+	                    // authorize the created virtual account
+	                    ChampionSocket.send({ authorize: Cookies.get('token') }, true);
+	                    toggleForm(true);
+	                }
+	            } else {
+	                var acc_info = response.new_account_real;
+	                Client.process_new_account(Client.get('email'), acc_info.client_id, acc_info.oauth_token);
+	                window.location.href = default_redirect_url();
+	            }
+	        });
+	    };
+
+	    return {
+	        load: load,
+	        unload: unload
+	    };
+	}();
+
+	module.exports = NewAccount;
+
+/***/ },
+/* 452 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var moment = __webpack_require__(302);
 	var Client = __webpack_require__(301);
-	var FormManager = __webpack_require__(454);
+	var FormManager = __webpack_require__(453);
 	var ChampionSocket = __webpack_require__(420);
 	var dateValueChanged = __webpack_require__(424).dateValueChanged;
-	var DatePicker = __webpack_require__(440).DatePicker;
-	var TimePicker = __webpack_require__(455);
+	var DatePicker = __webpack_require__(441).DatePicker;
+	var TimePicker = __webpack_require__(454);
 
 	var SelfExclusion = function () {
 	    'use strict';
@@ -38935,7 +38929,7 @@
 	module.exports = SelfExclusion;
 
 /***/ },
-/* 454 */
+/* 453 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39080,7 +39074,7 @@
 	module.exports = FormManager;
 
 /***/ },
-/* 455 */
+/* 454 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39223,7 +39217,7 @@
 	module.exports = TimePicker;
 
 /***/ },
-/* 456 */
+/* 455 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39253,7 +39247,7 @@
 	module.exports = ChampionSettings;
 
 /***/ },
-/* 457 */
+/* 456 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39314,7 +39308,7 @@
 	module.exports = TNCApproval;
 
 /***/ },
-/* 458 */
+/* 457 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39444,12 +39438,12 @@
 	module.exports = CashierDepositWithdraw;
 
 /***/ },
-/* 459 */
+/* 458 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Slider = __webpack_require__(460);
+	var Slider = __webpack_require__(459);
 
 	var Home = function () {
 	    'use strict';
@@ -39477,12 +39471,12 @@
 	module.exports = Home;
 
 /***/ },
-/* 460 */
+/* 459 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	__webpack_require__(461);
+	__webpack_require__(460);
 
 	var Slider = function () {
 	    var init = function init() {
@@ -39550,7 +39544,7 @@
 	module.exports = Slider;
 
 /***/ },
-/* 461 */
+/* 460 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -42188,15 +42182,15 @@
 	});
 
 /***/ },
-/* 462 */
+/* 461 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Client = __webpack_require__(301);
 	var showLoadingImage = __webpack_require__(424).showLoadingImage;
-	var FinancialAssessment = __webpack_require__(463);
-	var PersonalDetails = __webpack_require__(464);
+	var FinancialAssessment = __webpack_require__(462);
+	var PersonalDetails = __webpack_require__(463);
 
 	var Profile = function () {
 	    'use strict';
@@ -42246,7 +42240,7 @@
 	module.exports = Profile;
 
 /***/ },
-/* 463 */
+/* 462 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42391,7 +42385,7 @@
 	module.exports = FinancialAssessment;
 
 /***/ },
-/* 464 */
+/* 463 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42400,7 +42394,7 @@
 	var ChampionSocket = __webpack_require__(420);
 	var Validation = __webpack_require__(438);
 	var moment = __webpack_require__(302);
-	__webpack_require__(465);
+	__webpack_require__(464);
 
 	var PersonalDetails = function () {
 	    'use strict';
@@ -42592,7 +42586,7 @@
 	module.exports = PersonalDetails;
 
 /***/ },
-/* 465 */
+/* 464 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var require;var require;/*!
@@ -48323,7 +48317,7 @@
 
 
 /***/ },
-/* 466 */
+/* 465 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48351,7 +48345,7 @@
 	module.exports = ChampionSecurity;
 
 /***/ },
-/* 467 */
+/* 466 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48450,13 +48444,13 @@
 	module.exports = LoginHistory;
 
 /***/ },
-/* 468 */
+/* 467 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var ChampionSocket = __webpack_require__(420);
-	var DatePicker = __webpack_require__(440).DatePicker;
+	var DatePicker = __webpack_require__(441).DatePicker;
 	var moment = __webpack_require__(302);
 
 	var TradingTimes = function () {
@@ -48571,7 +48565,7 @@
 	module.exports = TradingTimes;
 
 /***/ },
-/* 469 */
+/* 468 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
