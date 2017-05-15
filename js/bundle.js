@@ -38305,7 +38305,7 @@
 	                    if (response.error) {
 	                        MetaTraderUI.displayFormMessage(response.error.message);
 	                    } else {
-	                        MetaTraderUI.loadAction(action);
+	                        MetaTraderUI.loadAction(null, acc_type);
 	                        MetaTraderUI.displayMainMessage(actions_info[action].success_msg(response));
 	                        getAccountDetails(actions_info[action].login ? actions_info[action].login(response) : types_info[acc_type].account_info.login, acc_type);
 	                        if (typeof actions_info[action].onSuccess === 'function') {
@@ -38703,14 +38703,17 @@
 
 	        setAccountType(acc_type);
 
-	        var default_action = types_info[acc_type].account_info ? types_info[acc_type].is_demo ? 'password_change' : 'deposit' : 'new_account';
 	        if ($action.hasClass(hidden_class)) {
-	            loadAction(default_action);
+	            loadAction(defaultAction(acc_type));
 	        }
 	    };
 
-	    var loadAction = function loadAction(action) {
-	        $detail.find('.acc-actions [class*=act_' + action + ']').click();
+	    var defaultAction = function defaultAction(acc_type) {
+	        return types_info[acc_type].account_info ? types_info[acc_type].is_demo ? 'password_change' : 'deposit' : 'new_account';
+	    };
+
+	    var loadAction = function loadAction(action, acc_type) {
+	        $detail.find('.acc-actions [class*=act_' + (action || defaultAction(acc_type)) + ']').click();
 	    };
 
 	    var populateForm = function populateForm(e) {
