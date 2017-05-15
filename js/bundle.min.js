@@ -38305,9 +38305,13 @@
 	                    if (response.error) {
 	                        MetaTraderUI.displayFormMessage(response.error.message);
 	                    } else {
+	                        var login = actions_info[action].login ? actions_info[action].login(response) : types_info[acc_type].account_info.login;
+	                        if (!types_info[acc_type].account_info) {
+	                            types_info[acc_type].account_info = { login: login };
+	                        }
 	                        MetaTraderUI.loadAction(null, acc_type);
 	                        MetaTraderUI.displayMainMessage(actions_info[action].success_msg(response));
-	                        getAccountDetails(actions_info[action].login ? actions_info[action].login(response) : types_info[acc_type].account_info.login, acc_type);
+	                        getAccountDetails(login, acc_type);
 	                        if (typeof actions_info[action].onSuccess === 'function') {
 	                            actions_info[action].onSuccess(response, acc_type);
 	                        }
