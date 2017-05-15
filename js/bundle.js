@@ -38359,7 +38359,7 @@
 	        new_account: {
 	            title: 'Sign Up',
 	            success_msg: function success_msg(response) {
-	                return 'Congratulations! Your [_1] Account has been created.'.replace('[_1]', types_info[response.mt5_new_account.account_type === 'financial' ? 'champion_' + response.mt5_new_account.mt5_account_type : response.mt5_new_account.account_type].title);
+	                return 'Congratulations! Your [_1] Account has been created.'.replace('[_1]', types_info[(response.mt5_new_account.account_type === 'financial' ? 'real' : 'demo') + '_champion_' + response.mt5_new_account.mt5_account_type].title);
 	            },
 	            login: function login(response) {
 	                return response.mt5_new_account.login;
