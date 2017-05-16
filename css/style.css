@@ -1818,6 +1818,22 @@ button .barspinner.white {
     display: block;
   }
 }
+@media (max-width: 991px) {
+  #mt_account_management .mt-container {
+    padding: 0 10px;
+  }
+}
+@media (max-width: 1199px) {
+  #mt_account_management .mt-container {
+    padding: 0 20px;
+  }
+  #mt_account_management #accounts_list {
+    font-size: 13px;
+  }
+  #mt_account_management #accounts_list .mt-balance {
+    font-size: 11px !important;
+  }
+}
 .app-store-badge, .google-play-badge {
   background-repeat: no-repeat;
   width: 135px;
@@ -2696,6 +2712,10 @@ button .barspinner.white {
   }
 }
 @media (min-width: 768px) {
+  .container, .fx-container {
+    width: 100%;
+  }
+
   .hidden-sm-up {
     display: none !important;
   }
@@ -2711,6 +2731,11 @@ button .barspinner.white {
 
   .fx-panel, .fx-panel-item {
     height: auto;
+  }
+}
+@media (min-width: 991px) {
+  .container, .fx-container {
+    width: 100%;
   }
 }
 @media (max-width: 1199px) {
