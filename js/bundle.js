@@ -36197,7 +36197,7 @@
 	        Client.get('loginid_array').forEach(function (login) {
 	            if (!login.disabled) {
 	                var curr_id = login.id;
-	                var type = '(' + (login.real ? 'Real' : 'Virtual') + ' Account)';
+	                var type = '(' + (login.real ? 'Real' : 'Virtual') + ' Binary Account)';
 	                var icon = login.real ? 'fx-real-icon' : 'fx-virtual-icon';
 	                var is_current = curr_id === Client.get('loginid');
 
