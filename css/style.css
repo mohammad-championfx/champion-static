@@ -1431,8 +1431,12 @@ iframe {
   margin-left: 0;
 }
 #top_group.logged-in #header .top-nav-menu li a {
-  padding: 5px 15px;
+  padding: 0 15px;
+  line-height: 50px;
   border-bottom: none;
+}
+#top_group.logged-in #header .top-nav-menu li a.active {
+  background: #013365;
 }
 #top_group.logged-in #header, #top_group.logged-in #header #main-logout, #top_group.logged-in #header #main-account {
   height: 50px;
