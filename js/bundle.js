@@ -18778,7 +18778,7 @@
 	    };
 
 	    var response_authorize = function response_authorize(response) {
-	        if (response.error || response.authorize.loginid !== Client.get('loginid')) {
+	        if (response.error || response.authorize.loginid !== (Client.get('loginid') || Cookies.get('loginid'))) {
 	            request_logout();
 	            return;
 	        }
