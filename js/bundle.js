@@ -38792,13 +38792,11 @@
 	                $('#msg_form').removeClass(hidden_class).text(response.error.message);
 	                $btn_submit.removeAttr('disabled');
 	                if (!isUpgrade()) {
-	                    // authorize the created virtual account
 	                    toggleForm(true);
 	                }
 	            } else {
 	                var acc_info = response.new_account_real;
 	                Client.process_new_account(Client.get('email'), acc_info.client_id, acc_info.oauth_token);
-	                window.location.href = default_redirect_url();
 	            }
 	        });
 	    };
