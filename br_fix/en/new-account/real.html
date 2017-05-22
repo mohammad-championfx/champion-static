@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
 
-    <title>Self Exclusion | Champion-FX.com</title>
+    <title>Create new real account | Champion-FX.com</title>
     <meta name="description" content="ChampionFX Static" />
 
     <meta property="og:title" content="Champion-FX.com" />
@@ -355,111 +355,150 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <div class="wrapper" id="champion-content">
             <div class="fx-section">
     <div class="container">
-        <div class="gr-12 gr-padding-10">
-            <h1 class="main-title" >Self-Exclusion Facilities</h1>
+        <h1 class="main-title" >Create a ChampionFX real account</h1>
 
-            <p>Trading the financial markets can become addictive. Fill in the form below to limit your participation on the website or send a signed letter or fax to our customer support team. Once set, you can only tighten your limits. Limits will only be removed or loosened after 7 days with the exception of the self-exclusion date, which cannot be removed or altered once you have confirmed it. To remove or increase your limits, please contact <a href="/champion-static/br_fix/en/contact.html">customer support</a>.</p>
-
-            <p id="msg_error" class="error-msg"></p>
-
-            <div class="barspinner dark">
+        <form id="frm_new_account_real">
+            <div class="row">
+                <div class="col-md-4">
+                    <h4>Details</h4>
+    <div class="separator primary-color"></div>
+    <div class="fx-divider"></div>
+                    <div class="form-row ">
+    <label for="ddl_title">Title</label>
+    
+                <select id="ddl_title" > 
+                        <option value="Mr">Mr</option>
+                        <option value="Mrs">Mrs</option>
+                        <option value="Ms">Ms</option>
+                        <option value="Miss">Miss</option>
+                                </select>
+    
+</div>
+                    <div class="form-row ">
+    <label for="txt_fname">First name</label>
+    
+                <input type="text" id="txt_fname" maxlength="30" />
+    
+</div>
+                    <div class="form-row ">
+    <label for="txt_lname">Family name</label>
+    
+                <input type="text" id="txt_lname" maxlength="30" />
+    
+</div>
+                    <div class="form-row ">
+    <label for="txt_birth_date">Date of birth</label>
+    
+                <input type="text" id="txt_birth_date" size="12" readonly="readonly" />
+    
+</div>
+                    <div class="form-row ">
+    <label>Country of residence</label>
+    <div id="residence_loading" class="small-spinner"><div class="barspinner dark">
     <div class="rect1"></div>
     <div class="rect2"></div>
     <div class="rect3"></div>
     <div class="rect4"></div>
     <div class="rect5"></div>
-</div>
-
-            <form id="frm_self_exclusion" class="invisible">
-                <div class="form-row ">
-    <label for="max_balance">Maximum account cash balance</label>
-    
-                <input type="text" id="max_balance" maxlength="20" />
-    <p class="hint">Once this limit is reached, you may no longer deposit.</p>
-</div>
-
-                <div class="form-row ">
-    <label for="max_turnover">Daily turnover limit</label>
-    
-                <input type="text" id="max_turnover" maxlength="20" />
-    <p class="hint">Maximum aggregate contract purchases per day.</p>
-</div>
-
-                <div class="form-row ">
-    <label for="max_losses">Daily limit on losses</label>
-    
-                <input type="text" id="max_losses" maxlength="20" />
-    <p class="hint">Maximum aggregate loss per day.</p>
-</div>
-
-                <div class="form-row ">
-    <label for="max_7day_turnover">7-day turnover limit</label>
-    
-                <input type="text" id="max_7day_turnover" maxlength="20" />
-    <p class="hint">Maximum aggregate contract purchases over a 7-day period.</p>
-</div>
-
-                <div class="form-row ">
-    <label for="max_7day_losses">7-day limit on losses</label>
-    
-                <input type="text" id="max_7day_losses" maxlength="20" />
-    <p class="hint">Maximum aggregate loss over a 7-day period.</p>
-</div>
-
-                <div class="form-row ">
-    <label for="max_30day_turnover">30-day turnover limit</label>
-    
-                <input type="text" id="max_30day_turnover" maxlength="20" />
-    <p class="hint">Maximum aggregate contract purchases over a 30-day period.</p>
-</div>
-
-                <div class="form-row ">
-    <label for="max_30day_losses">30-day limit on losses</label>
-    
-                <input type="text" id="max_30day_losses" maxlength="20" />
-    <p class="hint">Maximum aggregate loss over a 30-day period.</p>
-</div>
-
-                <div class="form-row ">
-    <label for="max_open_bets">Maximum number of open positions</label>
-    
-                <input type="text" id="max_open_bets" maxlength="4" />
+</div></div>
+                <span class="text-display invisible">
+                                <span id="lbl_residence" ></span>
+            </span>
     
 </div>
+                </div>
 
-                <div class="form-row ">
-    <label for="session_duration_limit">Session duration limit, in minutes</label>
+                <div class="col-md-4">
+                    <h4>Address</h4>
+    <div class="separator primary-color"></div>
+    <div class="fx-divider"></div>
+                    <div class="form-row ">
+    <label for="txt_address1">First line of home address</label>
     
-                <input type="text" id="session_duration_limit" maxlength="5" />
-    <p class="hint">You will be automatically logged out after such time.</p>
-</div>
-
-                <div class="form-row ">
-    <label for="timeout_until_date">Time out until</label>
+                <input type="text" id="txt_address1" maxlength="70" />
     
-                
-                    <div class="form-row">
-                        <input type="text" id="timeout_until_date" maxlength="15" autocomplete="off" />
-                    </div>
-                    <div>
-                        <input type="text" id="timeout_until_time" maxlength="8" autocomplete="off" />
-                    </div>
-                
-    <p class="hint">Please enter date in the format YYYY-MM-DD HH:mm (local time).</p>
 </div>
-
-                <div class="form-row ">
-    <label for="exclude_until">Exclude me from the website until</label>
+                    <div class="form-row ">
+    <label for="txt_address2">Second line of home address</label>
     
-                <input type="text" id="exclude_until" maxlength="15" autocomplete="off" />
-    <p class="hint">Please enter date in the format YYYY-MM-DD.</p>
+                <input type="text" id="txt_address2" maxlength="70" />
+    
 </div>
+                    <div class="form-row ">
+    <label for="txt_city">Town/City</label>
+    
+                <input type="text" id="txt_city" maxlength="35" />
+    
+</div>
+                    <div class="form-row ">
+    <label for="ddl_state">State/Province</label>
+    <div id="state_loading" class="small-spinner"><div class="barspinner dark">
+    <div class="rect1"></div>
+    <div class="rect2"></div>
+    <div class="rect3"></div>
+    <div class="rect4"></div>
+    <div class="rect5"></div>
+</div></div>
+                <select id="ddl_state" class="invisible">             </select>
+    
+</div>
+                    <div class="form-row ">
+    <label for="txt_postcode">Postal code/ZIP</label>
+    
+                <input type="text" id="txt_postcode" maxlength="20" />
+    
+</div>
+                    <div class="form-row ">
+    <label for="txt_phone">Telephone</label>
+    
+                <input type="text" id="txt_phone" maxlength="35" />
+    
+</div>
+                </div>
 
+                <div class="col-md-4">
+                    <h4>Security</h4>
+    <div class="separator primary-color"></div>
+    <div class="fx-divider"></div>
+                    <div class="form-row ">
+    <label for="ddl_secret_question">Secret question</label>
+    
+                <select id="ddl_secret_question" > 
+                        <option value="Favourite dish">Favourite dish</option>
+                        <option value="Mother's maiden name">Mother's maiden name</option>
+                        <option value="Name of your pet">Name of your pet</option>
+                        <option value="Name of first love">Name of first love</option>
+                        <option value="Memorable town/city">Memorable town/city</option>
+                        <option value="Memorable date">Memorable date</option>
+                        <option value="Brand of first car">Brand of first car</option>
+                        <option value="Favourite artist">Favourite artist</option>
+                                </select>
+    
+</div>
+                    <div class="form-row ">
+    <label for="txt_secret_answer">Answer to secret question</label>
+    
+                <input type="text" id="txt_secret_answer" maxlength="50" autocomplete="off" />
+    
+</div>
+                </div>
+            </div>
+
+            <div class="center-text">
+                <div class="fx-divider"></div>
+                <div class="form-row checkbox">
+    <input id="chk_not_pep" type="checkbox" />
+    <label for="chk_not_pep">I acknowledge that I am not a politically exposed person (<span data-balloon-length="xlarge" data-balloon="A PEP is an individual who is or has been entrusted with a prominent public function. This status extends to a PEP's relatives and close associates.">PEP</span>).</label>
+</div>
+                <div class="form-row checkbox">
+    <input id="chk_tnc" type="checkbox" />
+    <label for="chk_tnc">I have read and agree to the <a target="_blank" href="/champion-static/br_fix/en/terms-and-conditions.html">terms and conditions</a> of the site.</label>
+</div>
                 <div class="submit-row ">
     <p id="msg_form" class="error-msg invisible"></p>
-    <button id="btn_submit" type="submit">Update Settings</button> </div>
-            </form>
-        </div>
+    <button id="btn_submit" type="submit">Create account</button> </div>
+            </div>
+        </form>
     </div>
 </div>
         </div>
