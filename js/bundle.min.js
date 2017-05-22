@@ -38757,6 +38757,7 @@
 	                        var acc_info = response.new_account_virtual;
 	                        Client.process_new_account(acc_info.email, acc_info.client_id, acc_info.oauth_token, true);
 	                        ChampionSocket.send({ authorize: acc_info.oauth_token }, true).then(function () {
+	                            Client.init();
 	                            createRealAccount();
 	                        });
 	                    }
