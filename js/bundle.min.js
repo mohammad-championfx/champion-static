@@ -38578,7 +38578,6 @@
 	var default_redirect_url = __webpack_require__(426).default_redirect_url;
 	var Validation = __webpack_require__(438);
 	var DatePicker = __webpack_require__(441).DatePicker;
-	var Cookies = __webpack_require__(421);
 
 	var NewAccount = function () {
 	    'use strict';
@@ -38757,7 +38756,9 @@
 	                    } else {
 	                        var acc_info = response.new_account_virtual;
 	                        Client.process_new_account(acc_info.email, acc_info.client_id, acc_info.oauth_token, true);
-	                        createRealAccount();
+	                        ChampionSocket.send({ authorize: acc_info.oauth_token }, true).then(function () {
+	                            createRealAccount();
+	                        });
 	                    }
 	                });
 	            }
@@ -38792,7 +38793,6 @@
 	                $btn_submit.removeAttr('disabled');
 	                if (!isUpgrade()) {
 	                    // authorize the created virtual account
-	                    ChampionSocket.send({ authorize: Cookies.get('token') }, true);
 	                    toggleForm(true);
 	                }
 	            } else {
