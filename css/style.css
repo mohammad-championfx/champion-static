@@ -1558,6 +1558,11 @@ button .barspinner.white {
   outline: none;
 }
 
+ul.checked.small > li {
+  background-size: 16px;
+  padding-left: 24px;
+}
+
 #payment_methods h3 {
   margin: 20px 0 0;
 }
@@ -1838,6 +1843,11 @@ button .barspinner.white {
     font-size: 11px !important;
   }
 }
+#mt5_web_platform {
+  border: none;
+  width: 100%;
+}
+
 .app-store-badge, .google-play-badge {
   background-repeat: no-repeat;
   width: 135px;
