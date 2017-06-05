@@ -18552,22 +18552,23 @@
 	var Home = __webpack_require__(442);
 	var LostPassword = __webpack_require__(445);
 	var MT5 = __webpack_require__(446);
-	var ChampionNewReal = __webpack_require__(447);
-	var ChampionNewVirtual = __webpack_require__(449);
-	var ResetPassword = __webpack_require__(450);
-	var ChampionSignup = __webpack_require__(451);
-	var TradingPlatform = __webpack_require__(452);
-	var TradingTimes = __webpack_require__(453);
-	var Authenticate = __webpack_require__(454);
-	var ChangePassword = __webpack_require__(455);
-	var Limits = __webpack_require__(456);
-	var LoginHistory = __webpack_require__(457);
-	var MetaTrader = __webpack_require__(458);
-	var ChampionProfile = __webpack_require__(461);
-	var ChampionSecurity = __webpack_require__(465);
-	var SelfExclusion = __webpack_require__(466);
-	var ChampionSettings = __webpack_require__(469);
-	var TNCApproval = __webpack_require__(470);
+	var MT5WebPlatform = __webpack_require__(447);
+	var BinaryOptions = __webpack_require__(448);
+	var ChampionNewReal = __webpack_require__(449);
+	var ChampionNewVirtual = __webpack_require__(451);
+	var ResetPassword = __webpack_require__(452);
+	var ChampionSignup = __webpack_require__(453);
+	var TradingTimes = __webpack_require__(454);
+	var Authenticate = __webpack_require__(455);
+	var ChangePassword = __webpack_require__(456);
+	var Limits = __webpack_require__(457);
+	var LoginHistory = __webpack_require__(458);
+	var MetaTrader = __webpack_require__(459);
+	var ChampionProfile = __webpack_require__(462);
+	var ChampionSecurity = __webpack_require__(466);
+	var SelfExclusion = __webpack_require__(467);
+	var ChampionSettings = __webpack_require__(470);
+	var TNCApproval = __webpack_require__(471);
 
 	var Champion = function () {
 	    'use strict';
@@ -18642,6 +18643,8 @@
 	            'change-password': { module: ChangePassword, is_authenticated: true },
 	            'login-history': { module: LoginHistory, is_authenticated: true },
 	            'lost-password': { module: LostPassword, not_authenticated: true },
+	            'binary-options': { module: BinaryOptions },
+	            'mt5-web-platform': { module: MT5WebPlatform },
 	            'payment-methods': { module: CashierPaymentMethods },
 	            'reset-password': { module: ResetPassword, not_authenticated: true },
 	            'self-exclusion': { module: SelfExclusion, is_authenticated: true, only_real: true },
@@ -18650,7 +18653,7 @@
 	            'trading-times': { module: TradingTimes },
 	            'types-of-accounts': { module: ClientType },
 	            'trading-platform': { module: ClientType },
-	            'metatrader-5': { module: TradingPlatform },
+	            'metatrader-5': { module: ClientType },
 	            'champion-trader': { module: ClientType }
 	        };
 	        if (page in pages_map) {
@@ -36207,12 +36210,19 @@
 	    };
 
 	    var userMenu = function userMenu() {
+	        if (!Client.is_logged_in()) return;
 	        if (!Client.is_virtual()) {
 	            displayAccountStatus();
 	        }
 
-	        var loginid_select = '';
+	        var selectedTemplate = function selectedTemplate(text, value, icon) {
+	            return '<div class="hidden-lg-up">\n                 <span class="selected" value="' + value + '">\n                     <li><span class="nav-menu-icon pull-left ' + icon + '"></span>' + text + '</li>\n                 </span>\n                 <div class="separator-line-thin-gray hidden-lg-down"></div>\n             </div>';
+	        };
+	        var switchTemplate = function switchTemplate(text, value, icon, type, item_class) {
+	            return '<a href="javascript:;" value="' + value + '" class="' + item_class + '">\n                 <li>\n                     <span class="hidden-lg-up nav-menu-icon pull-left ' + icon + '"></span>\n                     <div>' + text + '</div>\n                     <div class="hidden-lg-down account-type">' + type + '</div>\n                 </li>\n                 <div class="separator-line-thin-gray hidden-lg-down"></div>\n            </a>';
+	        };
 	        var is_mt_pages = State.get('is_mt_pages');
+	        var loginid_select = is_mt_pages ? selectedTemplate('MetaTrader 5', '', 'fx-mt5-icon') : '';
 	        Client.get('loginid_array').forEach(function (login) {
 	            if (!login.disabled) {
 	                var curr_id = login.id;
@@ -36221,20 +36231,19 @@
 	                var is_current = curr_id === Client.get('loginid');
 
 	                // default account
-	                if (is_current) {
+	                if (is_current && !is_mt_pages) {
 	                    $('.main-account .account-type').html(type);
 	                    $('.main-account .account-id').html(curr_id);
-	                    loginid_select += '<div class="hidden-lg-up">\n                                        <span class="selected" href="javascript:;" value="' + curr_id + '">\n                                        <li><span class="nav-menu-icon pull-left ' + icon + '"></span>' + curr_id + '</li>\n                                        </span>\n                                       <div class="separator-line-thin-gray"></div></div>';
+	                    loginid_select += selectedTemplate(curr_id, curr_id, icon);
 	                } else if (is_mt_pages && login.real && Client.is_virtual()) {
 	                    switchLoginId(curr_id);
 	                    return;
 	                }
-	                var item_class = is_current ? 'mt-show' : '';
-	                loginid_select += '<a href="javascript:;" value="' + curr_id + '" class="' + item_class + '">\n                                        <li>\n                                            <span class="hidden-lg-up nav-menu-icon pull-left ' + icon + '"></span>\n                                            <div>' + curr_id + '</div>\n                                            <div class="hidden-lg-down account-type">' + type + '</div>\n                                        </li>\n                                   </a>\n                                   <div class="separator-line-thin-gray ' + item_class + '"></div>';
+	                loginid_select += switchTemplate(curr_id, curr_id, icon, type, is_current ? 'mt-show' : '');
 	            }
 	        });
+
 	        $('.login-id-list').html(loginid_select);
-	        $('#mobile-menu .mt-show').remove();
 	        setMetaTrader(is_mt_pages);
 	        if (!Client.has_real()) {
 	            $('#all-accounts .upgrade').removeClass(hidden_class);
@@ -40368,13 +40377,73 @@
 
 	'use strict';
 
+	var Client = __webpack_require__(301);
+	var ChampionSocket = __webpack_require__(420);
+
+	var MT5WebPlatform = function () {
+	    'use strict';
+
+	    var load = function load() {
+	        $('#footer').addClass('invisible');
+	        if (Client.is_logged_in()) {
+	            ChampionSocket.wait('mt5_login_list').then(function (response) {
+	                setFrameSource(response.mt5_login_list.length > 0);
+	            });
+	        } else {
+	            setFrameSource(false);
+	        }
+	    };
+
+	    var setFrameSource = function setFrameSource(has_mt_account) {
+	        var web_url = 'https://trade.mql5.com/trade?servers=ChampionGroup-Server&trade_server=ChampionGroup-Server&demo_server=ChampionGroup-Server&lang=en';
+	        if (!has_mt_account) {
+	            web_url += '&startup_mode=open_demo';
+	        }
+	        $(document).ready(function () {
+	            $('iframe#mt5_web_platform').attr('src', web_url).css('height', 'calc(100vh - ' + ($('#top_group').height() + 5) + 'px)');
+	        });
+	    };
+
+	    return {
+	        load: load
+	    };
+	}();
+
+	module.exports = MT5WebPlatform;
+
+/***/ },
+/* 448 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var BinaryOptions = function () {
+	    'use strict';
+
+	    var load = function load() {
+	        $('.has-tabs').tabs().removeClass('invisible');
+	    };
+
+	    return {
+	        load: load
+	    };
+	}();
+
+	module.exports = BinaryOptions;
+
+/***/ },
+/* 449 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	var moment = __webpack_require__(302);
 	var ChampionSocket = __webpack_require__(420);
 	var Client = __webpack_require__(301);
 	var Utility = __webpack_require__(424);
 	var default_redirect_url = __webpack_require__(426).default_redirect_url;
 	var Validation = __webpack_require__(436);
-	var DatePicker = __webpack_require__(448).DatePicker;
+	var DatePicker = __webpack_require__(450).DatePicker;
 
 	var ChampionNewRealAccount = function () {
 	    'use strict';
@@ -40528,7 +40597,7 @@
 	module.exports = ChampionNewRealAccount;
 
 /***/ },
-/* 448 */
+/* 450 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40692,7 +40761,7 @@
 	};
 
 /***/ },
-/* 449 */
+/* 451 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40781,7 +40850,7 @@
 	module.exports = ChampionNewVirtualAccount;
 
 /***/ },
-/* 450 */
+/* 452 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40790,7 +40859,7 @@
 	var Validation = __webpack_require__(436);
 	var ChampionSocket = __webpack_require__(420);
 	var Login = __webpack_require__(428);
-	var DatePicker = __webpack_require__(448).DatePicker;
+	var DatePicker = __webpack_require__(450).DatePicker;
 	var Utility = __webpack_require__(424);
 	var moment = __webpack_require__(302);
 
@@ -40893,7 +40962,7 @@
 	module.exports = ResetPassword;
 
 /***/ },
-/* 451 */
+/* 453 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40980,53 +41049,13 @@
 	module.exports = ChampionSignup;
 
 /***/ },
-/* 452 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var ClientType = __webpack_require__(440);
-	var Client = __webpack_require__(301);
-	var ChampionSocket = __webpack_require__(420);
-
-	var TradingPlatform = function () {
-	    'use strict';
-
-	    var load = function load() {
-	        ClientType.load();
-
-	        var web_url = 'https://trade.mql5.com/trade?servers=ChampionGroup-Server&trade_server=ChampionGroup-Server&demo_server=ChampionGroup-Server&startup_mode=open_demo&lang=en';
-	        if (Client.is_logged_in()) {
-	            ChampionSocket.wait('mt5_login_list').then(function (response) {
-	                if (response.mt5_login_list.length) {
-	                    $('a.mt5-web-platform').attr('href', web_url.replace('&startup_mode=open_demo', ''));
-	                }
-	            });
-	        } else {
-	            $('a.mt5-web-platform').attr('href', web_url);
-	        }
-	    };
-
-	    var unload = function unload() {
-	        ClientType.unload();
-	    };
-
-	    return {
-	        load: load,
-	        unload: unload
-	    };
-	}();
-
-	module.exports = TradingPlatform;
-
-/***/ },
-/* 453 */
+/* 454 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var ChampionSocket = __webpack_require__(420);
-	var DatePicker = __webpack_require__(448).DatePicker;
+	var DatePicker = __webpack_require__(450).DatePicker;
 	var moment = __webpack_require__(302);
 
 	var TradingTimes = function () {
@@ -41141,7 +41170,7 @@
 	module.exports = TradingTimes;
 
 /***/ },
-/* 454 */
+/* 455 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41178,7 +41207,7 @@
 	module.exports = Authenticate;
 
 /***/ },
-/* 455 */
+/* 456 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41246,7 +41275,7 @@
 	module.exports = ChangePassword;
 
 /***/ },
-/* 456 */
+/* 457 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41334,7 +41363,7 @@
 	module.exports = Limits;
 
 /***/ },
-/* 457 */
+/* 458 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41433,13 +41462,13 @@
 	module.exports = LoginHistory;
 
 /***/ },
-/* 458 */
+/* 459 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var MetaTraderConfig = __webpack_require__(459);
-	var MetaTraderUI = __webpack_require__(460);
+	var MetaTraderConfig = __webpack_require__(460);
+	var MetaTraderUI = __webpack_require__(461);
 	var Client = __webpack_require__(301);
 	var ChampionSocket = __webpack_require__(420);
 	var State = __webpack_require__(423).State;
@@ -41571,7 +41600,7 @@
 	module.exports = MetaTrader;
 
 /***/ },
-/* 459 */
+/* 460 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41791,12 +41820,12 @@
 	module.exports = MetaTraderConfig;
 
 /***/ },
-/* 460 */
+/* 461 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var MetaTraderConfig = __webpack_require__(459);
+	var MetaTraderConfig = __webpack_require__(460);
 	var Client = __webpack_require__(301);
 	var formatMoney = __webpack_require__(430).formatMoney;
 	var showLoadingImage = __webpack_require__(424).showLoadingImage;
@@ -42045,15 +42074,15 @@
 	module.exports = MetaTraderUI;
 
 /***/ },
-/* 461 */
+/* 462 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Client = __webpack_require__(301);
 	var showLoadingImage = __webpack_require__(424).showLoadingImage;
-	var FinancialAssessment = __webpack_require__(462);
-	var PersonalDetails = __webpack_require__(463);
+	var FinancialAssessment = __webpack_require__(463);
+	var PersonalDetails = __webpack_require__(464);
 
 	var Profile = function () {
 	    'use strict';
@@ -42103,7 +42132,7 @@
 	module.exports = Profile;
 
 /***/ },
-/* 462 */
+/* 463 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42248,7 +42277,7 @@
 	module.exports = FinancialAssessment;
 
 /***/ },
-/* 463 */
+/* 464 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42257,7 +42286,7 @@
 	var ChampionSocket = __webpack_require__(420);
 	var Validation = __webpack_require__(436);
 	var moment = __webpack_require__(302);
-	__webpack_require__(464);
+	__webpack_require__(465);
 
 	var PersonalDetails = function () {
 	    'use strict';
@@ -42449,7 +42478,7 @@
 	module.exports = PersonalDetails;
 
 /***/ },
-/* 464 */
+/* 465 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var require;var require;/*!
@@ -48180,7 +48209,7 @@
 
 
 /***/ },
-/* 465 */
+/* 466 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48208,18 +48237,18 @@
 	module.exports = ChampionSecurity;
 
 /***/ },
-/* 466 */
+/* 467 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var moment = __webpack_require__(302);
 	var Client = __webpack_require__(301);
-	var FormManager = __webpack_require__(467);
+	var FormManager = __webpack_require__(468);
 	var ChampionSocket = __webpack_require__(420);
 	var dateValueChanged = __webpack_require__(424).dateValueChanged;
-	var DatePicker = __webpack_require__(448).DatePicker;
-	var TimePicker = __webpack_require__(468);
+	var DatePicker = __webpack_require__(450).DatePicker;
+	var TimePicker = __webpack_require__(469);
 
 	var SelfExclusion = function () {
 	    'use strict';
@@ -48438,7 +48467,7 @@
 	module.exports = SelfExclusion;
 
 /***/ },
-/* 467 */
+/* 468 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48583,7 +48612,7 @@
 	module.exports = FormManager;
 
 /***/ },
-/* 468 */
+/* 469 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48726,7 +48755,7 @@
 	module.exports = TimePicker;
 
 /***/ },
-/* 469 */
+/* 470 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -48756,7 +48785,7 @@
 	module.exports = ChampionSettings;
 
 /***/ },
-/* 470 */
+/* 471 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
