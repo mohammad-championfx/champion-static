@@ -25226,7 +25226,7 @@
 	        // redirect back
 	        var set_default = true;
 	        if (redirect_url) {
-	            var do_not_redirect = ['reset-password', 'lost-password', 'change-password', 'home'];
+	            var do_not_redirect = ['reset-password', 'lost-password', 'change-password', 'home', '404'];
 	            var reg = new RegExp(do_not_redirect.join('|'), 'i');
 	            if (!reg.test(redirect_url) && url_for('') !== redirect_url) {
 	                set_default = false;
