@@ -24673,7 +24673,6 @@
 	        } else {
 	            desktopMenu();
 	        }
-	        setMetaTrader();
 	        userMenu();
 	        if (!Client.is_logged_in()) {
 	            $('#top_group').removeClass('logged-in').find('.logged-out').removeClass(hidden_class);
@@ -24757,6 +24756,8 @@
 	        if (!Client.is_virtual()) {
 	            displayAccountStatus();
 	        }
+
+	        setMetaTrader();
 
 	        var selectedTemplate = function selectedTemplate(text, value, icon) {
 	            return '<div class="hidden-lg-up">\n                 <span class="selected" value="' + value + '">\n                     <li><span class="nav-menu-icon pull-left ' + icon + '"></span>' + text + '</li>\n                 </span>\n                 <div class="separator-line-thin-gray hidden-lg-down"></div>\n             </div>';
