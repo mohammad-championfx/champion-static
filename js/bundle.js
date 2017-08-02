@@ -18482,6 +18482,7 @@
 	            virtual: { module: ChampionNewVirtual, not_authenticated: true },
 	            'cashier-password': { module: CashierPassword, is_authenticated: true, only_real: true },
 	            'change-password': { module: ChangePassword, is_authenticated: true },
+	            'choose-platform': { is_authenticated: true },
 	            'login-history': { module: LoginHistory, is_authenticated: true },
 	            'lost-password': { module: LostPassword, not_authenticated: true },
 	            'binary-options': { module: BinaryOptions },
@@ -24426,7 +24427,7 @@
 	}
 
 	function default_redirect_url() {
-	    return url_for('user/metatrader');
+	    return url_for('user/choose-platform');
 	}
 
 	function get_params() {
@@ -24638,7 +24639,6 @@
 	var State = __webpack_require__(307).State;
 	var url_for = __webpack_require__(310).url_for;
 	var Utility = __webpack_require__(308);
-	var isEmptyObject = __webpack_require__(308).isEmptyObject;
 	var template = __webpack_require__(308).template;
 
 	var Header = function () {
@@ -24824,13 +24824,11 @@
 	    var displayAccountStatus = function displayAccountStatus() {
 	        ChampionSocket.wait('authorize').then(function () {
 	            var get_account_status = void 0,
-	                status = void 0;
+	                status = void 0,
+	                has_mt_account = false;
 
 	            var riskAssessment = function riskAssessment() {
-	                if (get_account_status.risk_classification === 'high') {
-	                    return isEmptyObject(State.get(['response', 'get_financial_assessment', 'get_financial_assessment']));
-	                }
-	                return false;
+	                return (get_account_status.risk_classification === 'high' || has_mt_account) && /financial_assessment_not_complete/.test(status);
 	            };
 
 	            var messages = {
@@ -24869,14 +24867,19 @@
 	            ChampionSocket.wait('website_status', 'get_account_status', 'get_settings', 'get_financial_assessment').then(function () {
 	                get_account_status = State.get(['response', 'get_account_status', 'get_account_status']) || {};
 	                status = get_account_status.status;
-	                var notified = check_statuses.some(function (object) {
-	                    if (object.validation()) {
-	                        displayNotification(object.message());
-	                        return true;
+	                ChampionSocket.wait('mt5_login_list').then(function (response) {
+	                    if (response.mt5_login_list.length) {
+	                        has_mt_account = true;
 	                    }
-	                    return false;
+	                    var notified = check_statuses.some(function (object) {
+	                        if (object.validation()) {
+	                            displayNotification(object.message());
+	                            return true;
+	                        }
+	                        return false;
+	                    });
+	                    if (!notified) hideNotification();
 	                });
-	                if (!notified) hideNotification();
 	            });
 	        });
 	    };
@@ -30274,7 +30277,6 @@
 	var GTM = __webpack_require__(311);
 	var ChampionSocket = __webpack_require__(304);
 	var url_for = __webpack_require__(310).url_for;
-	var isEmptyObject = __webpack_require__(308).isEmptyObject;
 
 	var MetaTraderConfig = function () {
 	    'use strict';
@@ -30310,8 +30312,8 @@
 	                    } else if (Client.is_virtual()) {
 	                        resolve(needsRealMessage());
 	                    } else {
-	                        ChampionSocket.send({ get_financial_assessment: 1 }).then(function (response_financial) {
-	                            resolve(isEmptyObject(response_financial.get_financial_assessment) ? $('#msg_assessment').html() : '');
+	                        ChampionSocket.send({ get_account_status: 1 }).then(function (response) {
+	                            resolve(/financial_assessment_not_complete/.test(response.get_account_status.status) ? $('#msg_assessment').html() : '');
 	                        });
 	                    }
 	                });
@@ -30773,6 +30775,7 @@
 	        } else {
 	            PersonalDetails.load();
 	            FinancialAssessment.unload();
+	            history.pushState('', document.title, window.location.pathname + window.location.search);
 	        }
 
 	        $('.barspinner').addClass('invisible');
@@ -30812,7 +30815,8 @@
 	        arr_validation = [],
 	        $btn_submit = void 0,
 	        $msg_form = void 0,
-	        $msg_success = void 0;
+	        $msg_success = void 0,
+	        is_first_time = void 0;
 
 	    var load = function load() {
 	        showLoadingImage($('<div/>', { id: 'loading', class: 'center-text' }).insertAfter('#heading'));
@@ -30826,8 +30830,8 @@
 	        $msg_form = $(form_selector).find('#msg_form');
 	        $msg_success = $(form_selector).find('#msg_success');
 
-	        ChampionSocket.wait('get_financial_assessment').then(function (response) {
-	            handleForm(response);
+	        ChampionSocket.send({ get_financial_assessment: 1 }, true).then(function (response) {
+	            handleForm(response.get_financial_assessment);
 	        });
 	    };
 
@@ -30836,7 +30840,9 @@
 	            response = State.get(['response', 'get_financial_assessment']);
 	        }
 	        hideLoadingImg();
-	        financial_assessment = $.extend({}, response.get_financial_assessment);
+	        financial_assessment = $.extend({}, response);
+
+	        is_first_time = isEmptyObject(financial_assessment);
 
 	        if (isEmptyObject(financial_assessment)) {
 	            ChampionSocket.wait('get_account_status').then(function (data) {
@@ -30850,9 +30856,15 @@
 	            var val = financial_assessment[key];
 	            $('#' + key).val(val);
 	        });
+
 	        arr_validation = [];
 	        $(form_selector).find('select').map(function () {
-	            arr_validation.push({ selector: '#' + $(this).attr('id'), validations: ['req'] });
+	            var id = $(this).attr('id');
+	            arr_validation.push({ selector: '#' + id, validations: ['req'] });
+	            if (financial_assessment[id] === undefined) {
+	                // handle fields not previously set by client
+	                financial_assessment[id] = '';
+	            }
 	        });
 	        Validation.init(form_selector, arr_validation);
 	    };
@@ -30888,7 +30900,8 @@
 	                    showFormMessage('Sorry, an error occurred while processing your request.', false);
 	                } else {
 	                    showFormMessage('Your changes have been updated successfully.', true);
-	                    ChampionSocket.send({ get_financial_assessment: 1 }, true).then(function () {
+	                    // need to remove financial_assessment_not_complete from status if any
+	                    ChampionSocket.send({ get_account_status: 1 }, true).then(function () {
 	                        Header.displayAccountStatus();
 	                    });
 	                }
@@ -30907,7 +30920,8 @@
 
 	    var showFormMessage = function showFormMessage(msg, isSuccess) {
 	        $msg_form.removeClass(hidden_class).css('display', '').html('');
-	        if (isSuccess) {
+	        if (isSuccess && is_first_time) {
+	            is_first_time = false;
 	            $msg_success.removeClass(hidden_class);
 	            ChampionSocket.send({ get_account_status: 1 }).then(function (response_status) {
 	                if ($.inArray('authenticated', response_status.get_account_status.status) === -1) {
@@ -30915,7 +30929,8 @@
 	                }
 	            });
 	        } else {
-	            $msg_form.html(msg).delay(5000).fadeOut(1000);
+	            $msg_success.addClass(hidden_class);
+	            $msg_form.attr('class', isSuccess ? 'success-msg' : 'error-msg').css('display', 'block').html(msg).delay(5000).fadeOut(1000);
 	        }
 	    };
 
@@ -30990,6 +31005,14 @@
 	        get_settings.name = get_settings.salutation + ' ' + get_settings.first_name + ' ' + get_settings.last_name;
 	        get_settings.date_of_birth = get_settings.date_of_birth ? moment.utc(new Date(get_settings.date_of_birth * 1000)).format('YYYY-MM-DD') : '';
 
+	        if (get_settings.account_opening_reason) {
+	            $('#lbl_account_opening_reason').text(get_settings.account_opening_reason);
+	            $('#lbl_account_opening_reason').parent().parent().removeClass('invisible');
+	            $('#account_opening_reason').parent().addClass('invisible');
+	        } else {
+	            $('#account_opening_reason').parent().removeClass('invisible');
+	            $('#lbl_account_opening_reason').parent().parent().addClass('invisible');
+	        }
 	        return displayGetSettingsData(get_settings);
 	    };
 
@@ -31083,7 +31106,7 @@
 	    };
 
 	    var getValidations = function getValidations() {
-	        return [{ selector: '#address_line_1', validations: ['req', 'address', ['length', { min: 1, max: 70 }]] }, { selector: '#address_line_2', validations: ['address', ['length', { min: 0, max: 70 }]] }, { selector: '#address_city', validations: ['req', 'letter_symbol', ['length', { min: 1, max: 35 }]] }, { selector: '#address_state', validations: $('#address_state').prop('nodeName') === 'SELECT' ? '' : ['letter_symbol'] }, { selector: '#address_postcode', validations: ['postcode', ['length', { min: 0, max: 20 }]] }, { selector: '#phone', validations: ['phone', ['length', { min: 6, max: 35, exclude: /^\+/ }]] }, { selector: '#place_of_birth', validations: '' }, { selector: '#tax_residence', validations: '' }, { selector: '#tax_identification_number', validations: ['postcode', ['length', { min: 0, max: 20 }]] }];
+	        return [{ selector: '#address_line_1', validations: ['req', 'address', ['length', { min: 1, max: 70 }]] }, { selector: '#address_line_2', validations: ['address', ['length', { min: 0, max: 70 }]] }, { selector: '#address_city', validations: ['req', 'letter_symbol', ['length', { min: 1, max: 35 }]] }, { selector: '#address_state', validations: $('#address_state').prop('nodeName') === 'SELECT' ? '' : ['letter_symbol'] }, { selector: '#address_postcode', validations: ['postcode', ['length', { min: 0, max: 20 }]] }, { selector: '#phone', validations: ['phone', ['length', { min: 6, max: 35, exclude: /^\+/ }]] }, { selector: '#place_of_birth', validations: '' }, { selector: '#tax_residence', validations: '' }, { selector: '#tax_identification_number', validations: ['postcode', ['length', { min: 0, max: 20 }]] }, { selector: '#account_opening_reason', validations: ['req'] }];
 	    };
 
 	    var submitForm = function submitForm() {
@@ -37421,6 +37444,7 @@
 	'use strict';
 
 	var Client = __webpack_require__(300);
+	var State = __webpack_require__(307).State;
 
 	var ChampionSettings = function () {
 	    'use strict';
@@ -37428,6 +37452,7 @@
 	    var settingsContainer = void 0;
 
 	    var load = function load() {
+	        State.remove('is_mt_pages');
 	        settingsContainer = $('.fx-settings');
 
 	        if (!Client.is_virtual()) {
