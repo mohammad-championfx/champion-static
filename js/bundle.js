@@ -18537,7 +18537,7 @@
 	                });
 	            }
 	        } else if (config.not_authenticated && Client.is_logged_in()) {
-	            ChampionRouter.forward(default_redirect_url(), true);
+	            ChampionRouter.forward(default_redirect_url());
 	        } else {
 	            active_script.load();
 	        }
