@@ -18468,7 +18468,7 @@
 	            contact: { module: ChampionContact },
 	            endpoint: { module: ChampionEndpoint },
 	            forward: { module: CashierDepositWithdraw, is_authenticated: true, only_real: true },
-	            home: { module: Home },
+	            home: { module: Home, not_authenticated: true },
 	            limits: { module: Limits, is_authenticated: true, only_real: true },
 	            logged_inws: { module: LoggedIn },
 	            metatrader: { module: MetaTrader, is_authenticated: true },
