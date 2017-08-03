@@ -18537,7 +18537,7 @@
 	                });
 	            }
 	        } else if (config.not_authenticated && Client.is_logged_in()) {
-	            ChampionRouter.forward(default_redirect_url());
+	            ChampionRouter.forward(default_redirect_url(), true);
 	        } else {
 	            active_script.load();
 	        }
@@ -26271,7 +26271,7 @@
 
 	    var destroy = function destroy() {
 	        $('#slider-dots').empty();
-	        $('#slider').slick('unslick');
+	        $('#slider.slick-initialized').slick('unslick');
 	    };
 
 	    var positionFooterAndDots = function positionFooterAndDots() {
