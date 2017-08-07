@@ -25294,7 +25294,7 @@
 	            signup: { path: 'new-account/virtual' },
 	            reset_password: { path: 'reset-password' },
 	            payment_withdraw: { path: 'cashier/forward', hash: '#withdraw' },
-	            payment_agent_withdraw: null
+	            payment_agent_withdraw: null // to be updated once the functionality is available in ChampionFX
 	        };
 
 	        var params = Url.get_params();
@@ -29858,7 +29858,7 @@
 	                type: 'account_opening'
 	            }).then(function (response) {
 	                if (response.verify_email) {
-	                    $('#signup-box').text('Thank you for signing up! Please check your email to complete the registration process.');
+	                    $('.signup-box').text('Thank you for signing up! Please check your email to complete the registration process.');
 	                } else if (response.error) {
 	                    $(form_selector + ':visible #signup_error').text(response.error.message).removeClass(hidden_class);
 	                }
