@@ -29752,7 +29752,7 @@
 
 	                    $('#reset-error-msg').text(errMsg);
 	                } else {
-	                    $('p.notice-msg').text('Your password has been successfully reset. ' + 'Please log into your account using your new password.');
+	                    $('p.notice-msg').text('Your password has been successfully reset. ' + 'Please log into your account using your new password.').removeClass(hidden_class);
 	                    window.setTimeout(function () {
 	                        Login.redirect_to_login();
 	                    }, 5000);
