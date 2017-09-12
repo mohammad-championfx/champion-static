@@ -30437,7 +30437,6 @@
 	                            MetaTraderUI.setAccountType(acc_type, true);
 	                        }
 	                        MetaTraderUI.loadAction(null, acc_type);
-	                        MetaTraderUI.displayMainMessage(actions_info[action].success_msg(response));
 	                        getAccountDetails(login, acc_type);
 	                        if (typeof actions_info[action].success_msg === 'function') {
 	                            MetaTraderUI.displayMainMessage(actions_info[action].success_msg(response));

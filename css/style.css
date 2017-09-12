@@ -2945,7 +2945,7 @@ p {
   border: 2px solid #dedede;
   border-radius: 50%;
   background: no-repeat center;
-  background-size: 60px;
+  background-size: 50px;
 }
 #mt_account_management #account_details #acc_icon.cent {
   background-image: url("../images/metatrader/dashboard/acc_cent.svg");
