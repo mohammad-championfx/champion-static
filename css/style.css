@@ -2829,6 +2829,9 @@ p {
     font-size: 12px;
   }
 }
+#mt_account_management {
+  border: 3px solid #f2f2f2;
+}
 #mt_account_management > div {
   display: -webkit-box;
   display: -webkit-flex;
@@ -2839,8 +2842,6 @@ p {
   padding: 20px;
 }
 #mt_account_management .mt-panel {
-  border: 1px solid #dedede;
-  border-radius: 5px;
   margin-bottom: 20px;
   -webkit-box-flex: 1;
   -webkit-flex: 1;
@@ -2885,7 +2886,6 @@ p {
 }
 #mt_account_management #account_selector #accounts_list {
   width: 100%;
-  padding: 10px 0;
   border-radius: 0 0 5px 5px;
   border-top: 0;
   display: none;
@@ -2896,6 +2896,7 @@ p {
 #mt_account_management #account_selector #accounts_list .acc-name {
   line-height: 30px;
   padding: 0 20px;
+  border-top: 1px solid #f2f2f2;
 }
 #mt_account_management #account_selector #accounts_list .acc-name:hover {
   color: #004385;
@@ -2923,7 +2924,9 @@ p {
   padding-right: 5px;
 }
 #mt_account_management #mt_right_panel {
+  border-left: 3px solid #f2f2f2;
   font-size: 13px;
+  padding-left: 0;
 }
 #mt_account_management #mt_right_panel .platforms li {
   margin-bottom: 10px;
@@ -2958,6 +2961,12 @@ p {
 }
 #mt_account_management #account_details .acc-info {
   font-size: 13px;
+}
+#mt_account_management #account_details .acc-info .login {
+  padding: 2px 15px;
+  border-radius: 15px;
+  background: #f2f2f2;
+  color: #004385;
 }
 #mt_account_management #account_details .acc-info .balance {
   font-size: 18px;
@@ -3051,12 +3060,25 @@ p {
   height: 64px;
   max-width: 64px;
 }
-#mt_account_management .fst-container #fst_action .type-group .mt5_type_box {
-  width: 88px;
-  height: 88px;
+#mt_account_management .fst-container #fst_action #frm_new_account #btn_next span {
+  padding-right: 50px;
+  padding-left: 50px;
+}
+#mt_account_management .fst-container #fst_action #view_1 {
+  margin: 0 50px;
+}
+#mt_account_management .fst-container #fst_action #view_1 .flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+#mt_account_management .fst-container #fst_action #view_1 .mt5-type-box {
   margin: 0 auto;
-  border: 1px solid #dedede;
-  border-radius: 5px;
   cursor: pointer;
   position: relative;
   display: -webkit-box;
@@ -3067,21 +3089,90 @@ p {
   -webkit-align-items: center;
       -ms-flex-align: center;
           align-items: center;
+  border: 1px solid #f2f2f2;
 }
-#mt_account_management .fst-container #fst_action .type-group .mt5_type_box:hover {
+#mt_account_management .fst-container #fst_action #view_1 .mt5-type-box:hover {
   border-color: #004385;
 }
-#mt_account_management .fst-container #fst_action .type-group .mt5_type_box:before {
+#mt_account_management .fst-container #fst_action #view_1 .mt5-type-box:before {
   content: '';
   width: 16px;
   height: 16px;
-  border: 1px solid #dedede;
+  border: 1px solid #f2f2f2;
   border-radius: 50%;
   position: absolute;
   right: 6px;
   top: 6px;
 }
-#mt_account_management .fst-container #fst_action .type-group .mt5_type_box div {
+#mt_account_management .fst-container #fst_action #view_1 .mt5-type-box.existed:before {
+  background: url("../images/metatrader/dashboard/tick_gray.svg");
+  border: none;
+}
+#mt_account_management .fst-container #fst_action #view_1 .mt5-type-box.selected {
+  border-color: #004385;
+  cursor: default;
+}
+#mt_account_management .fst-container #fst_action #view_1 .mt5-type-box.selected:before {
+  background: url("../images/metatrader/dashboard/tick.svg");
+  border: none;
+}
+#mt_account_management .fst-container #fst_action #view_1 .mt5-type-box.disabled:before {
+  display: none;
+}
+#mt_account_management .fst-container #fst_action #view_1 .mt5-type-box.disabled, #mt_account_management .fst-container #fst_action #view_1 .mt5-type-box.existed {
+  cursor: default;
+}
+#mt_account_management .fst-container #fst_action #view_1 .mt5-type-box.disabled:hover, #mt_account_management .fst-container #fst_action #view_1 .mt5-type-box.existed:hover {
+  border-color: #f2f2f2;
+}
+#mt_account_management .fst-container #fst_action #view_1 .step-1 .mt5-type-box {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  padding-top: 20px;
+  width: 100%;
+  border-width: 3px;
+}
+#mt_account_management .fst-container #fst_action #view_1 .step-1 .mt5-type-box .title {
+  color: #004385;
+}
+#mt_account_management .fst-container #fst_action #view_1 .step-1 .mt5-type-box .image {
+  display: inline-block;
+  width: 75px;
+  height: 50px;
+  margin-top: 10px;
+  background: url("../images/metatrader/dashboard/acc_demo.svg") no-repeat center;
+}
+#mt_account_management .fst-container #fst_action #view_1 .step-1 .mt5-type-box#rbtn_real .image {
+  background-image: url("../images/metatrader/dashboard/acc_real.svg");
+}
+#mt_account_management .fst-container #fst_action #view_1 .step-1 .mt5-type-box#rbtn_real.disabled .image {
+  background-image: url("../images/metatrader/dashboard/acc_real_disabled.svg");
+}
+#mt_account_management .fst-container #fst_action #view_1 .step-1 .mt5-type-box #msg_real_financial {
+  display: none;
+}
+#mt_account_management .fst-container #fst_action #view_1 .step-1 .mt5-type-box.disabled .title {
+  color: #c2c2c2;
+}
+#mt_account_management .fst-container #fst_action #view_1 .step-1 .mt5-type-box.disabled .desc {
+  display: none;
+}
+#mt_account_management .fst-container #fst_action #view_1 .step-1 .mt5-type-box.disabled #msg_real_financial {
+  display: block;
+  margin-top: 10px;
+  text-align: left;
+}
+#mt_account_management .fst-container #fst_action #view_1 .step-2 .mt5-type-box {
+  width: 128px;
+  height: 128px;
+}
+#mt_account_management .fst-container #fst_action #view_1 .step-2 .mt5-type-box.disabled, #mt_account_management .fst-container #fst_action #view_1 .step-2 .mt5-type-box.existed {
+  background: rgba(0, 0, 0, 0.05);
+}
+#mt_account_management .fst-container #fst_action #view_1 .step-2 .mt5-type-box div {
   font-weight: bold;
   color: #004385;
   text-align: center;
@@ -3090,42 +3181,15 @@ p {
       -ms-flex: 1;
           flex: 1;
 }
-#mt_account_management .fst-container #fst_action .type-group .mt5_type_box img {
+#mt_account_management .fst-container #fst_action #view_1 .step-2 .mt5-type-box img {
   height: 65px;
   -webkit-box-flex: 1;
   -webkit-flex: 1;
       -ms-flex: 1;
           flex: 1;
 }
-#mt_account_management .fst-container #fst_action .type-group .mt5_type_box.disabled, #mt_account_management .fst-container #fst_action .type-group .mt5_type_box.existed {
-  cursor: default;
-}
-#mt_account_management .fst-container #fst_action .type-group .mt5_type_box.disabled:hover, #mt_account_management .fst-container #fst_action .type-group .mt5_type_box.existed:hover {
-  border-color: #dedede;
-}
-#mt_account_management .fst-container #fst_action .type-group .mt5_type_box.disabled:after, #mt_account_management .fst-container #fst_action .type-group .mt5_type_box.existed:after {
-  content: '';
-  width: 88px;
-  height: 88px;
-  position: absolute;
-  background: rgba(0, 0, 0, 0.05);
-}
-#mt_account_management .fst-container #fst_action .type-group .mt5_type_box.existed:before {
-  background: url("../images/metatrader/dashboard/tick_gray.svg");
-  border: none;
-}
-#mt_account_management .fst-container #fst_action .type-group .mt5_type_box.selected {
-  border-color: #004385;
-  cursor: default;
-}
-#mt_account_management .fst-container #fst_action .type-group .mt5_type_box.selected:before {
-  background: url("../images/metatrader/dashboard/tick.svg");
-  border: none;
-}
-#mt_account_management .fst-container #fst_action .type-group p {
-  width: 140px;
-  margin-left: auto;
-  margin-right: auto;
+#mt_account_management .fst-container #fst_action #view_1 .step-2 p {
+  margin-bottom: 0;
 }
 #mt_account_management .txt-left {
   text-align: left;

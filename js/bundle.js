@@ -30493,15 +30493,16 @@
 	            login: function login(response) {
 	                return response.mt5_new_account.login;
 	            },
-	            prerequisites: function prerequisites(acc_type) {
+	            prerequisites: function prerequisites(is_real) {
 	                return new Promise(function (resolve) {
-	                    if (types_info[acc_type].is_demo) {
+	                    if (!is_real) {
 	                        resolve();
 	                    } else if (Client.is_virtual()) {
-	                        resolve(needsRealMessage());
+	                        $('#msg_real_financial').html(needsRealMessage());
+	                        resolve(true);
 	                    } else {
 	                        ChampionSocket.send({ get_account_status: 1 }).then(function (response_get_account_status) {
-	                            var $message = $('#msg_real_financial').clone();
+	                            var $message = $('#msg_real_financial');
 	                            var is_ok = true;
 	                            if (/financial_assessment_not_complete/.test(response_get_account_status.get_account_status.status)) {
 	                                $message.find('.assessment').setVisibility(1).find('a').attr('onclick', 'localStorage.setItem(\'financial_assessment_redirect\', \'' + url_for('user/metatrader') + '\')');
@@ -30511,7 +30512,7 @@
 	                                $message.find('.authenticate').setVisibility(1);
 	                                is_ok = false;
 	                            }
-	                            resolve(is_ok ? '' : $message.html());
+	                            resolve(!is_ok);
 	                        });
 	                    }
 	                });
@@ -30670,7 +30671,6 @@
 	var formatMoney = __webpack_require__(315).formatMoney;
 	var getOffset = __webpack_require__(309).getOffset;
 	var showLoadingImage = __webpack_require__(309).showLoadingImage;
-	var template = __webpack_require__(309).template;
 	var Validation = __webpack_require__(322);
 
 	var MetaTraderUI = function () {
@@ -30901,7 +30901,6 @@
 	    var handleNewAccountUI = function handleNewAccountUI(action, acc_type, $target) {
 	        var is_new_account = action === 'new_account';
 	        var $acc_actions = $container.find('.acc-actions');
-	        $acc_actions.find('.new-account').setVisibility(is_new_account);
 	        $acc_actions.find('.has-account').setVisibility(!is_new_account);
 	        $detail.setVisibility(!is_new_account);
 
@@ -30914,13 +30913,17 @@
 	        }
 
 	        // is_new_account
-	        newAccountSetTitle();
 	        displayAccountDescription(action);
 	        _$form = actions_info[action].$form;
+	        actions_info[action].prerequisites(true).then(function (error_msg) {
+	            _$form.find('#rbtn_real')[error_msg ? 'addClass' : 'removeClass']('disabled');
+	        });
 
 	        // Navigation buttons: cancel, next, back
 	        _$form.find('#btn_cancel').click(function () {
 	            loadAction(null, acc_type);
+	            displayAccountDescription(acc_type);
+	            $.scrollTo($('h1'), 300, { offset: getOffset() });
 	        });
 	        var displayStep = function displayStep(step) {
 	            _$form.find('#mv_new_account div[id^="view_"]').setVisibility(0);
@@ -30938,11 +30941,7 @@
 	        });
 
 	        // Account type selection
-	        _$form.find('.mt5_type_box').click(selectAccountTypeUI);
-	    };
-
-	    var newAccountSetTitle = function newAccountSetTitle(acc_type) {
-	        $container.find('.acc-actions .new-account span').text(template($templates.find('#title_new_account').text(), [acc_type ? types_info[acc_type].title : '']));
+	        _$form.find('.mt5-type-box').click(selectAccountTypeUI);
 	    };
 
 	    var newAccountGetType = function newAccountGetType() {
@@ -30951,7 +30950,7 @@
 
 	    var selectAccountTypeUI = function selectAccountTypeUI(e) {
 	        var action = 'new_account';
-	        var box_class = 'mt5_type_box';
+	        var box_class = 'mt5-type-box';
 	        var $item = $(e.target);
 	        if (!$item.hasClass(box_class)) {
 	            $item = $item.parents('.' + box_class);
@@ -30961,7 +30960,6 @@
 	        $item.addClass('selected');
 	        var selected_acc_type = $item.attr('data-acc-type');
 	        if (/(demo|real)/.test(selected_acc_type)) {
-	            newAccountSetTitle();
 	            displayAccountDescription(action);
 	            updateAccountTypesUI(selected_acc_type);
 	            _$form.find('#view_1 #btn_next').addClass('button-disabled');
@@ -30969,12 +30967,8 @@
 	            displayMessage('#new_account_msg', selected_acc_type === 'real' && Client.get('is_virtual') ? MetaTraderConfig.needsRealMessage() : '', true);
 	        } else {
 	            var new_acc_type = newAccountGetType();
-	            newAccountSetTitle(new_acc_type);
 	            displayAccountDescription(new_acc_type);
-	            actions_info[action].prerequisites(new_acc_type).then(function (error_msg) {
-	                displayMessage('#new_account_msg', error_msg || '');
-	                _$form.find('#view_1 #btn_next')[error_msg ? 'addClass' : 'removeClass']('button-disabled');
-	            });
+	            _$form.find('#view_1 #btn_next').removeClass('button-disabled');
 	        }
 	    };
 
