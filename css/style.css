@@ -1385,6 +1385,51 @@ iframe {
           flex: 0 1 auto;
 }
 
+#how_payment_works fieldset {
+  border: 3px solid #f2f2f2 !important;
+  padding: 40px;
+}
+#how_payment_works fieldset legend {
+  color: #004385;
+  padding: 0 10px;
+  margin-left: -20px;
+}
+#how_payment_works fieldset .amount {
+  color: #004385;
+  font-size: 13px;
+}
+#how_payment_works fieldset .arrow-1 > div {
+  width: 155px;
+  height: 33px;
+  background: url("../images/mt5/how_payment_works/arrow_deposit.svg") no-repeat center;
+}
+#how_payment_works fieldset .arrow-1 > div.withdraw {
+  background-image: url("../images/mt5/how_payment_works/arrow_withdraw.svg");
+}
+#how_payment_works fieldset .arrow-3 > div {
+  width: 155px;
+  height: 145px;
+  line-height: 40px;
+  background: url("../images/mt5/how_payment_works/arrow_deposit_3.svg") no-repeat center;
+}
+#how_payment_works fieldset .arrow-3 > div.withdraw {
+  background-image: url("../images/mt5/how_payment_works/arrow_withdraw_3.svg");
+}
+#how_payment_works fieldset .arrow-3 > div :first-child {
+  -webkit-transform: rotate(-15deg);
+          transform: rotate(-15deg);
+}
+#how_payment_works fieldset .arrow-3 > div :last-child {
+  -webkit-transform: rotate(15deg);
+          transform: rotate(15deg);
+}
+#how_payment_works fieldset .mt5-account {
+  text-align: left;
+}
+#how_payment_works fieldset .mt5-account > div {
+  margin-bottom: 25px;
+}
+
 .fx-advisors {
   background: url("../images/symbols/advisors.svg");
 }
@@ -2831,6 +2876,7 @@ p {
 }
 #mt_account_management {
   border: 3px solid #f2f2f2;
+  border-radius: 5px;
 }
 #mt_account_management > div {
   display: -webkit-box;
@@ -2899,11 +2945,11 @@ p {
   border-top: 1px solid #f2f2f2;
 }
 #mt_account_management #account_selector #accounts_list .acc-name:hover {
-  color: #004385;
   background: #f2f2f2;
 }
 #mt_account_management #account_selector #accounts_list .acc-name.selected {
-  background: #dedede;
+  color: #004385;
+  background: #f2f2f2;
 }
 #mt_account_management #account_selector #accounts_list .acc-name .mt-balance {
   float: right;
@@ -2921,7 +2967,7 @@ p {
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
-  padding-right: 5px;
+  padding-right: 0px;
 }
 #mt_account_management #mt_right_panel {
   border-left: 3px solid #f2f2f2;
@@ -2941,6 +2987,7 @@ p {
   -webkit-flex: 0;
       -ms-flex: 0;
           flex: 0;
+  margin-bottom: 0;
 }
 #mt_account_management #account_details #acc_icon {
   width: 90px;
@@ -2972,34 +3019,45 @@ p {
   font-size: 18px;
   color: #004385;
 }
-#mt_account_management .acc-actions {
+#mt_account_management .tab-container {
+  padding: 0 10px 10px;
+}
+#mt_account_management .tab-container .acc-actions {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
 }
-#mt_account_management .acc-actions * {
+#mt_account_management .tab-container .acc-actions * {
   -webkit-transition: unset !important;
   transition: unset !important;
 }
-#mt_account_management .acc-actions a, #mt_account_management .acc-actions > span {
-  background: #f2f2f2;
+#mt_account_management .tab-container .acc-actions .spacer {
+  width: 5px;
+}
+#mt_account_management .tab-container .acc-actions a {
+  border-radius: 5px 5px 0 0;
   line-height: 40px;
   font-weight: normal;
   -webkit-box-flex: 1;
   -webkit-flex: 1;
       -ms-flex: 1;
           flex: 1;
+  background: #e0e8f0;
+  /* stylelint-disable-line color-no-hex */
+  color: #000;
 }
-#mt_account_management .acc-actions a:first-child, #mt_account_management .acc-actions > span:first-child {
-  border-radius: 5px 0 0;
+#mt_account_management .tab-container .acc-actions a.selected {
+  border: 2px solid #f2f2f2;
+  border-bottom: none;
+  background: #fff;
+  color: #004385;
+  padding-bottom: 2px;
+  margin-bottom: -2px;
 }
-#mt_account_management .acc-actions a:last-child, #mt_account_management .acc-actions > span:last-child {
-  border-radius: 0 5px 0 0;
-}
-#mt_account_management .acc-actions a.selected, #mt_account_management .acc-actions > span.selected {
-  color: #fff;
-  background: #004385;
+#mt_account_management .fst-container {
+  border: 2px solid #f2f2f2;
+  border-radius: 0 0 5px 5px;
 }
 #mt_account_management .fst-container #fst_action {
   position: relative;
@@ -3017,6 +3075,9 @@ p {
 #mt_account_management .fst-container #fst_action #frm_cashier .mt-panel {
   margin-bottom: 0;
   padding: 15px;
+}
+#mt_account_management .fst-container #fst_action #frm_cashier .bordered {
+  border: 2px solid #f2f2f2;
 }
 #mt_account_management .fst-container #fst_action #frm_cashier .binary-balance, #mt_account_management .fst-container #fst_action #frm_cashier .mt5-balance {
   font-weight: bold;
@@ -3055,6 +3116,18 @@ p {
 }
 #mt_account_management .fst-container #fst_action #frm_cashier .cashier-guide div:first-child {
   text-align: right;
+}
+#mt_account_management .fst-container #fst_action #frm_cashier .payment-guide {
+  display: block;
+  text-align: right;
+  line-height: 20px;
+  margin-top: -15px;
+}
+#mt_account_management .fst-container #fst_action #frm_cashier .payment-guide a {
+  color: #c2c2c2;
+  font-weight: normal;
+  padding-right: 20px;
+  background: url("../images/metatrader/dashboard/question_mark.svg") no-repeat center right;
 }
 #mt_account_management .fst-container #fst_action #frm_cashier img {
   height: 64px;
