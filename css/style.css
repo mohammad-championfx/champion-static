@@ -3059,6 +3059,9 @@ p {
   border: 2px solid #f2f2f2;
   border-radius: 0 0 5px 5px;
 }
+#mt_account_management .fst-container.no-border {
+  border: none;
+}
 #mt_account_management .fst-container #fst_action {
   position: relative;
 }
