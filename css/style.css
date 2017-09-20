@@ -1071,7 +1071,10 @@ a:hover {
 }
 
 .lightbox {
-  display: table;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
   position: fixed;
   top: 0;
   left: 0;
@@ -1080,22 +1083,36 @@ a:hover {
   background-color: rgba(0, 0, 0, 0.7);
   z-index: 2000000000;
 }
-
-.lightbox > div {
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.lightbox > div > div {
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0.5em;
-  width: 44em;
+.lightbox .lightbox-contents {
+  margin: auto;
+  max-width: 600px;
+  max-height: 90vh;
+  padding: 30px;
   text-align: center;
   background-color: #fff;
   border-radius: 5px;
-  max-height: 80vh;
   overflow: auto;
+  position: relative;
+}
+.lightbox .lightbox-contents .close {
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
+  background: url("../images/mt5/close.svg") no-repeat center;
+  position: absolute;
+  right: 15px;
+  top: 15px;
+}
+.lightbox#success_popup .main-image {
+  height: 90px;
+  min-width: 90px;
+  background: url("../images/mt5/success.svg") no-repeat center;
+}
+.lightbox#success_popup h3 {
+  margin: 10px 0;
+}
+.lightbox#success_popup .success-contents {
+  line-height: 24px;
 }
 
 .small-spinner .barspinner {

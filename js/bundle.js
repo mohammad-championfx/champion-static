@@ -24163,6 +24163,25 @@
 	    return -$('#top_group.logged-in').height() + (offset || -10);
 	}
 
+	function showLightBox(id, contents, has_close_button) {
+	    var $lightbox = $('<div/>', { id: id || '', class: 'lightbox' }).append($('<div/>', { class: 'lightbox-contents', html: contents }));
+
+	    if (has_close_button) {
+	        $lightbox.find('.lightbox-contents').prepend($('<div/>', { class: 'close' }));
+	        $lightbox.find('.close').on('click', function () {
+	            $lightbox.remove();
+	        });
+	    }
+
+	    $('body').append($lightbox);
+	}
+
+	function showSuccessPopup(title, contents) {
+	    var $contents = $('<div/>', { class: 'center-text' }).append($('<div/>', { class: 'main-image' }), $('<h3/>', { text: title }), $('<div/>', { class: 'success-contents', html: contents }));
+
+	    showLightBox('success_popup', $contents, true);
+	}
+
 	module.exports = {
 	    showLoadingImage: showLoadingImage,
 	    isEmptyObject: isEmptyObject,
@@ -24180,6 +24199,8 @@
 	    slideIn: slideIn,
 	    slideOut: slideOut,
 	    getOffset: getOffset,
+	    showLightBox: showLightBox,
+	    showSuccessPopup: showSuccessPopup,
 
 	    compareBigUnsignedInt: compareBigUnsignedInt
 	};
@@ -25341,6 +25362,7 @@
 	var Client = __webpack_require__(301);
 	var ChampionSocket = __webpack_require__(305);
 	var template = __webpack_require__(309).template;
+	var showLightBox = __webpack_require__(309).showLightBox;
 
 	var SessionDurationLimit = function () {
 	    'use strict';
@@ -25396,7 +25418,7 @@
 	    };
 
 	    var displayWarning = function displayWarning() {
-	        $('body').append($('<div id=\'session_limit\' class=\'lightbox\'><div><div><div class=\'limit_message\'>' + template('Your session duration limit will end in [_1] seconds.', [warning / 1000]) + '</div></div></div></div>'));
+	        showLightBox('session_limit', $('<div/>', { class: 'limit_message', text: template('Your session duration limit will end in [_1] seconds.', [warning / 1000]) }));
 	        $('#session_limit').click(function () {
 	            $(this).remove();
 	        });
@@ -30470,6 +30492,7 @@
 	var ChampionSocket = __webpack_require__(305);
 	var url_for = __webpack_require__(311).url_for;
 	var template = __webpack_require__(309).template;
+	var showSuccessPopup = __webpack_require__(309).showSuccessPopup;
 
 	var MetaTraderConfig = function () {
 	    'use strict';
@@ -30517,7 +30540,8 @@
 	                    }
 	                });
 	            },
-	            onSuccess: function onSuccess(response) {
+	            onSuccess: function onSuccess(response, acc_type) {
+	                showSuccessPopup(template('Congratulation, you’ve successfully created your [_1] account.', [types_info[acc_type].title]), 'You can trade Forex, CFDs and Metals with our virtual money, launch our MetaTrader 5 on our sidebar Quick Links or Download it to your machine or mobile applications.');
 	                GTM.mt5NewAccount(response);
 	            }
 	        },
