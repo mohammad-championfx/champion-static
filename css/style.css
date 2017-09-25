@@ -2793,7 +2793,7 @@ p {
 #mt_account_management .fst-container #fst_action #frm_cashier .bordered {
   border: 2px solid #f2f2f2;
 }
-#mt_account_management .fst-container #fst_action #frm_cashier .binary-balance, #mt_account_management .fst-container #fst_action #frm_cashier .mt5-balance {
+#mt_account_management .fst-container #fst_action #frm_cashier .binary-balance, #mt_account_management .fst-container #fst_action #frm_cashier .mt-balance {
   font-weight: bold;
   color: #004385;
   font-size: 18px;
@@ -2918,7 +2918,7 @@ p {
   -webkit-flex-direction: column;
       -ms-flex-direction: column;
           flex-direction: column;
-  padding-top: 20px;
+  padding: 20px 10px 0;
   width: 100%;
   border-width: 3px;
 }
@@ -2949,8 +2949,6 @@ p {
 }
 #mt_account_management .fst-container #fst_action #view_1 .step-1 .mt5-type-box.disabled #msg_real_financial {
   display: block;
-  margin-top: 10px;
-  text-align: left;
 }
 #mt_account_management .fst-container #fst_action #view_1 .step-2 .mt5-type-box {
   width: 128px;

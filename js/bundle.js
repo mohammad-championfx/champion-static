@@ -30743,8 +30743,10 @@
 	        $acc_item.find('.mt-type').text('' + types_info[acc_type].title);
 	        if (types_info[acc_type].account_info) {
 	            $acc_item.find('.mt-login').text(types_info[acc_type].account_info.login);
-	            $acc_item.find('.mt-balance').text(formatMoney(+types_info[acc_type].account_info.balance, mt5_currency));
 	            $acc_item.setVisibility(1);
+	            if (acc_type === Client.get('mt5_account')) {
+	                $container.find('.mt-balance').html(formatMoney(+types_info[acc_type].account_info.balance, mt5_currency));
+	            }
 	            if (Object.keys(types_info).every(function (type) {
 	                return types_info[type].account_info;
 	            })) {
@@ -30799,6 +30801,7 @@
 	        if ($target.prop('tagName').toLowerCase() !== 'a') {
 	            $target = $target.parents('a');
 	        }
+	        $main_msg.setVisibility(0);
 
 	        var acc_type = Client.get('mt5_account');
 	        var action = $target.attr('class').split(' ').find(function (c) {
@@ -30834,12 +30837,12 @@
 	        if (!actions_info[action]) {
 	            // Manage Fund
 	            cloneForm();
-	            _$form.find('.binary-balance').html('' + formatMoney(Client.get('balance'), Client.get('currency')));
+	            _$form.find('.binary-balance').html(formatMoney(Client.get('balance'), Client.get('currency')));
 	            _$form.find('.binary-account').text('ChampionFX (' + Client.get('loginid') + ')');
 	            _$form.find('.cashier-guide div:first-child').html('ChampionFX<br>' + Client.get('loginid'));
 
-	            _$form.find('.mt5-balance').html('' + formatMoney(types_info[acc_type].account_info.balance, mt5_currency));
-	            _$form.find('.mt5-account').text(types_info[acc_type].title + ' (' + types_info[acc_type].account_info.login + ')');
+	            _$form.find('.mt-balance').html(formatMoney(+types_info[acc_type].account_info.balance, mt5_currency));
+	            _$form.find('.mt-account').text(types_info[acc_type].title + ' (' + types_info[acc_type].account_info.login + ')');
 	            _$form.find('.cashier-guide div:last-child').html('MetaTrader 5<br>' + types_info[acc_type].account_info.login);
 
 	            ['deposit', 'withdrawal'].forEach(function (act) {
@@ -30951,7 +30954,7 @@
 	        Object.keys(types_info).filter(function (acc_type) {
 	            return acc_type.indexOf(type) === 0;
 	        }).forEach(function (acc_type) {
-	            _$form.find('.step-2 #' + acc_type.replace(type, 'rbtn')).removeClass('existed disabled selected').addClass(types_info[acc_type].account_info ? 'existed' : type === 'real' && (!types_info[acc_type].is_enabled || Client.get('is_virtual')) ? 'disabled' : '');
+	            _$form.find('.step-2 #' + acc_type.replace(type, 'rbtn')).removeClass('existed disabled selected').addClass(types_info[acc_type].account_info ? 'existed' : type === 'real' && Client.get('is_virtual') ? 'disabled' : '');
 	        });
 	    };
 
@@ -30976,6 +30979,9 @@
 	    var displayMainMessage = function displayMainMessage(message) {
 	        $main_msg.html(message).setVisibility(1);
 	        $.scrollTo($action, 500, { offset: getOffset(-80) });
+	        setTimeout(function () {
+	            $main_msg.setVisibility(0);
+	        }, 5000);
 	    };
 
 	    var displayMessage = function displayMessage(selector, message, is_centered) {
