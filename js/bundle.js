@@ -25786,7 +25786,7 @@
 
 	    var showError = function showError(field, message) {
 	        clearError(field);
-	        field.$error.text(message).removeClass(hidden_class);
+	        field.$error.html(message).removeClass(hidden_class);
 	    };
 
 	    var validate = function validate(form_selector) {
@@ -30614,10 +30614,10 @@
 	    var validations = {
 	        new_account: [{ selector: fields.new_account.txt_name.id, validations: ['req', 'letter_symbol', ['length', { min: 2, max: 30 }]] }, { selector: fields.new_account.txt_main_pass.id, validations: ['req', ['password', 'mt']] }, { selector: fields.new_account.txt_re_main_pass.id, validations: ['req', ['compare', { to: fields.new_account.txt_main_pass.id }]] }, { selector: fields.new_account.txt_investor_pass.id, validations: ['req', ['password', 'mt'], ['not_equal', { to: fields.new_account.txt_main_pass.id, name1: 'Main password', name2: 'Investor password' }]] }],
 	        password_change: [{ selector: fields.password_change.txt_old_password.id, validations: ['req'] }, { selector: fields.password_change.txt_new_password.id, validations: ['req', ['password', 'mt'], ['not_equal', { to: fields.password_change.txt_old_password.id, name1: 'Current password', name2: 'New password' }]] }, { selector: fields.password_change.txt_re_new_password.id, validations: ['req', ['compare', { to: fields.password_change.txt_new_password.id }]] }],
-	        deposit: [{ selector: fields.deposit.txt_amount.id, validations: ['req', ['number', { type: 'float', min: 1, max: 20000, decimals: '0, 2' }]] }],
-	        withdrawal: [{ selector: fields.withdrawal.txt_main_pass.id, validations: ['req'] }, { selector: fields.withdrawal.txt_amount.id, validations: ['req', ['number', { type: 'float', min: 1, max: 20000, decimals: '0, 2' }], ['custom', { func: function func() {
+	        deposit: [{ selector: fields.deposit.txt_amount.id, validations: ['req', ['number', { type: 'float', min: 1, max: 20000, decimals: '0, 2' }], ['custom', { func: function func() {
 	                    return Client.get('balance') && +Client.get('balance') >= +$(fields.deposit.txt_amount.id).val();
-	                }, message: template('You have insufficient fund in your Binary account, please <a href="[_1]">add fund</a>.', [url_for('cashier')]) }]] }]
+	                }, message: template('You have insufficient fund in your Binary account, please <a href="[_1]">add fund</a>.', [url_for('cashier')]) }]] }],
+	        withdrawal: [{ selector: fields.withdrawal.txt_main_pass.id, validations: ['req'] }, { selector: fields.withdrawal.txt_amount.id, validations: ['req', ['number', { type: 'float', min: 1, max: 20000, decimals: '0, 2' }]] }]
 	    };
 
 	    return {
