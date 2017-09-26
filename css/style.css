@@ -1304,6 +1304,10 @@ iframe {
   margin-bottom: 25px;
 }
 
+.button {
+  text-decoration: none;
+}
+
 .fx-advisors {
   background: url("../images/symbols/advisors.svg");
 }
