@@ -2757,6 +2757,7 @@ p {
   background: #e0e8f0;
   /* stylelint-disable-line color-no-hex */
   color: #000;
+  text-decoration: none;
 }
 #mt_account_management .tab-container .acc-actions a.selected {
   border: 2px solid #f2f2f2;
