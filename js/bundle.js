@@ -30329,6 +30329,10 @@
 
 	        Client.set('mt5_account', getDefaultAccount(response.mt5_login_list));
 
+	        // remove hash from url
+	        var url = window.location.href.split('#')[0];
+	        window.history.replaceState({ url: url }, null, url);
+
 	        // Update types with no account
 	        Object.keys(types_info).forEach(function (acc_type) {
 	            if (!types_info[acc_type].account_info) {
@@ -30338,18 +30342,13 @@
 	    };
 
 	    var getDefaultAccount = function getDefaultAccount(login_list) {
-	        return (
-	            // remove hash from url
-	            // const url = window.location.href.split('#')[0];
-	            // window.history.replaceState({ url: url }, null, url);
-	            Object.keys(types_info).indexOf(location.hash.substring(1)) >= 0 ? location.hash.substring(1) : (types_info[Client.get('mt5_account')] || {}).account_info && Client.get('mt5_account') || (login_list && login_list.length ? Client.getMT5AccountType((login_list.find(function (login) {
-	                return (/real/.test(login.group)
-	                );
-	            }) || login_list.find(function (login) {
-	                return (/demo/.test(login.group)
-	                );
-	            })).group) : 'demo_champion_cent')
-	        );
+	        return Object.keys(types_info).indexOf(location.hash.substring(1)) >= 0 ? location.hash.substring(1) : (types_info[Client.get('mt5_account')] || {}).account_info && Client.get('mt5_account') || (login_list && login_list.length ? Client.getMT5AccountType((login_list.find(function (login) {
+	            return (/real/.test(login.group)
+	            );
+	        }) || login_list.find(function (login) {
+	            return (/demo/.test(login.group)
+	            );
+	        })).group) : 'demo_champion_cent');
 	    };
 
 	    var getAccountDetails = function getAccountDetails(login, acc_type) {
@@ -31453,7 +31452,7 @@
 /* 352 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var require;var require;/*!
+	var require;var require;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 	 * Select2 4.0.3
 	 * https://select2.github.io
 	 *

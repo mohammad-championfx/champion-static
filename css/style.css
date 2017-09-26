@@ -2689,6 +2689,9 @@ p {
   font-size: 13px;
   padding-left: 0;
 }
+#mt_account_management #mt_right_panel #account_desc {
+  border-bottom: 1px solid #f2f2f2;
+}
 #mt_account_management #mt_right_panel .platforms li {
   margin-bottom: 10px;
 }
