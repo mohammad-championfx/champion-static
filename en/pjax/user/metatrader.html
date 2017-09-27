@@ -5,7 +5,7 @@
     <div class="wrapper" id="champion-content">
         <div class="fx-section">
     <div class="container">
-        <h1>MetaTrader 5 Dashboard</h1>
+        <h3>MetaTrader 5 Dashboard</h3>
         <div id="mt_loading"><div class="barspinner dark">
     <div class="rect1"></div>
     <div class="rect2"></div>
@@ -22,8 +22,8 @@
                                 <div id="acc_icon"></div>
                             </div>
                             <div class="flex-grow gutters">
-                                <div class="row">
-                                    <div class="flex-grow">
+                                <div class="row gutters">
+                                    <div class="flex-adapt">
                                         <div id="account_selector">
                                             <h4 id="mt5_account"></h4>
                                             <div id="accounts_list">
@@ -37,25 +37,25 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="acc-info has-account invisible">
-                                    <div class="row padding-10">
-                                        <div class="col-sm-2 col-xs-3">Name:</div>
-                                        <div data="name"></div>
+                                <div class="acc-info has-account acc-box invisible">
+                                    <div class="padding-10">
+                                        <span>Name:</span>
+                                        <span data="name"></span>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-sm-2 col-xs-3">Login ID:</div>
-                                        <div class="login" data="login"></div>
+                                    <div>
+                                        <span>Login ID:</span>
+                                        <span class="login" data="login"></span>
                                     </div>
-                                    <div class="row padding-10 hidden-sm-up">
-                                        <div class="col-sm-2 col-xs-3">Balance:</div>
-                                        <div class="balance flex-grow" data="balance"></div>
+                                    <div class="padding-10 hidden-md-up">
+                                        <span>Balance:</span>
+                                        <span class="balance flex-grow" data="balance"></span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex-adapt align-end gutters hidden-xs-down">
+                            <div class="flex-adapt align-end gutters hidden-md-down">
                                 <div class="acc-info has-account invisible">
-                                    <div>Balance</div>
-                                    <div class="balance padding-10" data="balance"></div>
+                                    <div>Current balance:</div>
+                                    <h3 class="balance padding-10" data="balance"></h3>
                                 </div>
                             </div>
                         </div>
@@ -278,9 +278,7 @@
                                 <p id="new_account_msg" class="notice-msg center-text invisible"></p>
                                 <div class="separator padding-10"></div>
                                 <div class="center-text">
-                                    <a id="btn_cancel" class="button button-secondary" href="javascript:;">
-                                        <span>Cancel</span>
-                                    </a>
+                                    <a id="btn_cancel" href="javascript:;">Cancel</a>
                                     <a id="btn_next" class="button button-disabled" href="javascript:;">
                                         <span>Next</span>
                                     </a>
@@ -367,7 +365,7 @@
                                         <div class="col-sm-5">
                                             <img src="/champion-static/images/metatrader/dashboard/binary_wallet.svg" />
                                             <div class="binary-account padding-10"></div>
-                                            <div class="binary-balance padding-10"></div>
+                                            <h2 class="binary-balance padding-10"></h2>
                                             <a class="secondary-color small-text" href="/champion-static/en/cashier.html">Add fund</a>
                                         </div>
                                         <div class="col-sm-2">
@@ -376,7 +374,7 @@
                                         <div class="col-sm-5">
                                             <img src="/champion-static/images/metatrader/dashboard/mt5_wallet.svg" />
                                             <div class="mt-account padding-10"></div>
-                                            <div class="mt-balance padding-10"></div>
+                                            <h2 class="mt-balance padding-10"></h2>
                                             <div class="small-text">Deposit or withdraw below</div>
                                         </div>
                                     </div>

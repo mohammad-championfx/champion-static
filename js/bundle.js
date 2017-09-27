@@ -30768,7 +30768,7 @@
 
 	        if (types_info[acc_type].account_info) {
 	            // Update account info
-	            $detail.find('.acc-info div[data]').map(function () {
+	            $detail.find('.acc-info [data]').map(function () {
 	                var key = $(this).attr('data');
 	                var info = types_info[acc_type].account_info[key];
 	                $(this).text(key === 'balance' ? formatMoney(+info, mt5_currency) : key === 'leverage' ? '1:' + info : info);
@@ -31452,7 +31452,7 @@
 /* 352 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var require;var require;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var require;var require;/*!
 	 * Select2 4.0.3
 	 * https://select2.github.io
 	 *

@@ -1308,6 +1308,10 @@ iframe {
   text-decoration: none;
 }
 
+.align-end {
+  text-align: right;
+}
+
 .fx-advisors {
   background: url("../images/symbols/advisors.svg");
 }
@@ -2615,6 +2619,7 @@ p {
           flex-direction: column;
 }
 #mt_account_management #account_selector {
+  width: 300px;
   position: relative;
   cursor: pointer;
 }
@@ -2624,7 +2629,7 @@ p {
 #mt_account_management #account_selector #mt5_account {
   height: 36px;
   line-height: 36px;
-  padding: 0 20px;
+  padding: 0 30px 0 20px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   margin: 0;
@@ -2641,6 +2646,7 @@ p {
   display: block;
   float: right;
   margin-top: 17px;
+  margin-right: -15px;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-top: 5px solid #fff;
@@ -2665,10 +2671,6 @@ p {
 #mt_account_management #account_selector #accounts_list .acc-name.selected {
   color: #004385;
   background: #f2f2f2;
-}
-#mt_account_management #account_selector #accounts_list .acc-name .mt-balance {
-  float: right;
-  font-size: 13px;
 }
 #mt_account_management #account_selector #accounts_list .acc-name .mt-icon {
   float: right;
@@ -2734,8 +2736,13 @@ p {
   color: #004385;
 }
 #mt_account_management #account_details .acc-info .balance {
-  font-size: 18px;
   color: #004385;
+}
+#mt_account_management #account_details .acc-box {
+  max-width: 300px;
+}
+#mt_account_management #account_details .acc-box span[data] {
+  float: right;
 }
 #mt_account_management .tab-container {
   padding: 0 10px 10px;
@@ -2754,6 +2761,8 @@ p {
   width: 5px;
 }
 #mt_account_management .tab-container .acc-actions a {
+  border: 2px solid #f2f2f2;
+  border-bottom: none;
   border-radius: 5px 5px 0 0;
   line-height: 40px;
   font-weight: normal;
@@ -2761,15 +2770,13 @@ p {
   -webkit-flex: 1;
       -ms-flex: 1;
           flex: 1;
-  background: #e0e8f0;
-  /* stylelint-disable-line color-no-hex */
+  background: #fff;
   color: #000;
   text-decoration: none;
 }
 #mt_account_management .tab-container .acc-actions a.selected {
-  border: 2px solid #f2f2f2;
-  border-bottom: none;
-  background: #fff;
+  border-color: #e0e8f0;
+  background: #e0e8f0;
   color: #004385;
   padding-bottom: 2px;
   margin-bottom: -2px;
@@ -2800,11 +2807,6 @@ p {
 }
 #mt_account_management .fst-container #fst_action #frm_cashier .bordered {
   border: 2px solid #f2f2f2;
-}
-#mt_account_management .fst-container #fst_action #frm_cashier .binary-balance, #mt_account_management .fst-container #fst_action #frm_cashier .mt-balance {
-  font-weight: bold;
-  color: #004385;
-  font-size: 18px;
 }
 #mt_account_management .fst-container #fst_action #frm_cashier .flex {
   display: -webkit-box;
@@ -2984,6 +2986,9 @@ p {
 #mt_account_management .fst-container #fst_action #view_1 .step-2 p {
   margin-bottom: 0;
 }
+#mt_account_management .fst-container #fst_action #view_1 #btn_cancel {
+  margin: 0 20px;
+}
 #mt_account_management .txt-left {
   text-align: left;
 }
@@ -2999,7 +3004,12 @@ p {
     padding: 0 10px;
   }
   #mt_account_management #mt_left_panel #account_selector {
+    width: 200px;
     margin-left: 20px;
+  }
+  #mt_account_management #mt_left_panel .acc-box {
+    padding: 0 20px;
+    max-width: 240px;
   }
   #mt_account_management #mt_right_panel {
     padding: 0 10px;
@@ -3020,9 +3030,6 @@ p {
 @media (max-width: 1199px) {
   #mt_account_management #accounts_list {
     font-size: 13px;
-  }
-  #mt_account_management #accounts_list .mt-balance {
-    font-size: 11px !important;
   }
 }
 #mt5_web_platform {
