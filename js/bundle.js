@@ -24718,7 +24718,6 @@
 	            $('#top_group').removeClass('logged-in').find('.logged-out').removeClass(hidden_class);
 	            $('.trading-platform-header').removeClass(hidden_class);
 	            $('.navbar__brand, .navbar__toggle').removeClass('logged-in'); // show logo
-	            $('#header > .navbar').removeClass('navbar--fixed');
 	        }
 	    };
 
@@ -24729,7 +24728,6 @@
 	        updateBody();
 
 	        $('#header .logged-in').removeClass(hidden_class);
-	        $('#header > .navbar').addClass('navbar--fixed');
 
 	        // to be remove when we change notification ui
 	        $(window).on('orientationchange resize', updateMobileMenuHeight);
@@ -31452,7 +31450,7 @@
 /* 352 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var require;var require;/*!
+	var require;var require;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 	 * Select2 4.0.3
 	 * https://select2.github.io
 	 *

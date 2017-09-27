@@ -2857,6 +2857,9 @@ p {
   height: 64px;
   max-width: 64px;
 }
+#mt_account_management .fst-container #fst_action #frm_cashier h2 {
+  margin-bottom: 10px;
+}
 #mt_account_management .fst-container #fst_action #frm_new_account #btn_next span {
   padding-right: 50px;
   padding-left: 50px;
