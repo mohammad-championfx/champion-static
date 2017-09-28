@@ -30337,7 +30337,7 @@
 
 	        // Update types with no account
 	        Object.keys(types_info).filter(function (acc_type) {
-	            return hasAccount(acc_type);
+	            return !hasAccount(acc_type);
 	        }).forEach(function (acc_type) {
 	            MetaTraderUI.updateAccount(acc_type);
 	        });
@@ -30775,7 +30775,7 @@
 	    };
 
 	    var setCurrentAccount = function setCurrentAccount(acc_type) {
-	        if (acc_type !== Client.get('mt5_account')) return;
+	        if (Client.get('mt5_account') && Client.get('mt5_account') !== acc_type) return;
 
 	        $detail.find('#acc_icon').attr('class', types_info[acc_type].mt5_account_type);
 	        if (!$('#frm_new_account').is(':visible')) {
@@ -31491,7 +31491,7 @@
 /* 352 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var require;var require;/*!
+	var require;var require;var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 	 * Select2 4.0.3
 	 * https://select2.github.io
 	 *
