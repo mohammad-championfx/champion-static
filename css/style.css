@@ -2830,7 +2830,10 @@ p {
   padding-left: 10px;
 }
 #mt_account_management .fst-container #fst_action #frm_cashier .cashier-guide {
-  display: inline-block;
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
 }
 #mt_account_management .fst-container #fst_action #frm_cashier .cashier-guide div {
   display: inline-block;
