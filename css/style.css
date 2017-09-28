@@ -2622,6 +2622,7 @@ p {
   width: 300px;
   position: relative;
   cursor: pointer;
+  margin-bottom: 10px;
 }
 #mt_account_management #account_selector #mt5_account, #mt_account_management #account_selector #accounts_list {
   border: 1px solid #004385;
@@ -2764,7 +2765,8 @@ p {
   border: 2px solid #f2f2f2;
   border-bottom: none;
   border-radius: 5px 5px 0 0;
-  line-height: 40px;
+  line-height: 20px;
+  padding: 10px;
   font-weight: normal;
   -webkit-box-flex: 1;
   -webkit-flex: 1;
@@ -2814,9 +2816,9 @@ p {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-flex: 1;
-  -webkit-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
+  -webkit-flex: 1 1 auto;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
@@ -2834,6 +2836,9 @@ p {
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
   display: inline-flex;
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
 }
 #mt_account_management .fst-container #fst_action #frm_cashier .cashier-guide div {
   display: inline-block;
@@ -3036,17 +3041,20 @@ p {
     border-left: 0;
     padding-left: 15px;
   }
-  #mt_account_management .fst-container #fst_action #frm_cashier .flex:first-child {
-    padding-right: 15px;
-    margin-bottom: 10px;
-  }
-  #mt_account_management .fst-container #fst_action #frm_cashier .flex:last-child {
-    padding-left: 15px;
-  }
 }
 @media (max-width: 991px) {
   #mt_account_management .mt-container {
     padding: 10px;
+  }
+  #mt_account_management .fst-container #fst_action #frm_cashier .payment-guide {
+    margin-top: -5px;
+  }
+  #mt_account_management .fst-container #fst_action #frm_cashier .flex:first-child {
+    padding-right: 15px;
+    margin: 10px 0;
+  }
+  #mt_account_management .fst-container #fst_action #frm_cashier .flex:last-child {
+    padding-left: 15px;
   }
 }
 @media (max-width: 1199px) {
