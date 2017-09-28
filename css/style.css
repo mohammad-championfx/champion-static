@@ -3028,6 +3028,22 @@ p {
     padding-left: 15px;
   }
 }
+@media (max-width: 767px) {
+  #mt_account_management #mt_left_panel {
+    padding-right: 15px;
+  }
+  #mt_account_management #mt_right_panel {
+    border-left: 0;
+    padding-left: 15px;
+  }
+  #mt_account_management .fst-container #fst_action #frm_cashier .flex:first-child {
+    padding-right: 15px;
+    margin-bottom: 10px;
+  }
+  #mt_account_management .fst-container #fst_action #frm_cashier .flex:last-child {
+    padding-left: 15px;
+  }
+}
 @media (max-width: 991px) {
   #mt_account_management .mt-container {
     padding: 10px;
