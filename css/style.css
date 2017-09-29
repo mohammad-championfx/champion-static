@@ -2624,9 +2624,6 @@ p {
   cursor: pointer;
   margin-bottom: 10px;
 }
-#mt_account_management #account_selector #mt5_account, #mt_account_management #account_selector #accounts_list {
-  border: 1px solid #004385;
-}
 #mt_account_management #account_selector #mt5_account {
   height: 36px;
   line-height: 36px;
@@ -2635,12 +2632,10 @@ p {
           box-sizing: border-box;
   margin: 0;
   overflow: hidden;
-  background: #004385;
-  color: #fff;
+  color: #004385;
+  border: 1px solid #c2c2c2;
   border-radius: 5px;
-}
-#mt_account_management #account_selector #mt5_account.open {
-  border-radius: 5px 5px 0 0;
+  font-size: inherit;
 }
 #mt_account_management #account_selector #mt5_account:after {
   content: '';
@@ -2650,10 +2645,22 @@ p {
   margin-right: -15px;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 5px solid #fff;
+  border-top: 5px solid #004385;
+}
+#mt_account_management #account_selector #mt5_account.open, #mt_account_management #account_selector #mt5_account:hover {
+  background: #004385;
+  color: #fff;
+  border-color: #004385;
+}
+#mt_account_management #account_selector #mt5_account.open:after, #mt_account_management #account_selector #mt5_account:hover:after {
+  border-top-color: #fff;
+}
+#mt_account_management #account_selector #mt5_account.open {
+  border-radius: 5px 5px 0 0;
 }
 #mt_account_management #account_selector #accounts_list {
   width: 100%;
+  border: 1px solid #004385;
   border-radius: 0 0 5px 5px;
   border-top: 0;
   display: none;
@@ -2680,6 +2687,10 @@ p {
   margin: 10px 0;
 }
 #mt_account_management #mt_left_panel {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -webkit-flex-direction: column;
@@ -2738,6 +2749,7 @@ p {
 }
 #mt_account_management #account_details .acc-info .balance {
   color: #004385;
+  padding-top: 0;
 }
 #mt_account_management #account_details .acc-box {
   max-width: 300px;
@@ -2747,6 +2759,19 @@ p {
 }
 #mt_account_management .tab-container {
   padding: 0 10px 10px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 1 auto;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
 }
 #mt_account_management .tab-container .acc-actions {
   display: -webkit-box;
@@ -2786,6 +2811,10 @@ p {
 #mt_account_management .fst-container {
   border: 2px solid #f2f2f2;
   border-radius: 0 0 5px 5px;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 1 auto;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
 }
 #mt_account_management .fst-container.no-border {
   border: none;
